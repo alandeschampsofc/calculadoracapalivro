@@ -1,0 +1,1969 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Cover Pro - Calculadora de Lombada e Gabarito</title>
+    <!-- Tailwind CSS para Estilização Premium -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para Ícones elegantes -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- jsPDF para Geração de PDFs Técnicos -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Three.js para Simulador 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            900: '#4c1d95'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Personalização fina de rolagem e efeitos */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans flex flex-col antialiased">
+
+    <!-- HEADER -->
+    <header class="bg-slate-950 border-b border-slate-800 py-4 px-6 sticky top-0 z-40 shadow-lg">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="bg-gradient-to-tr from-brand-600 to-indigo-500 p-2.5 rounded-xl shadow-md">
+                    <i class="fa-solid fa-book-open text-xl text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        Book Cover Pro <span class="text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full uppercase font-semibold">v2.0 Premium</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Calculadora de Lombada e Gabaritos de Alta Fidelidade</p>
+                </div>
+            </div>
+            
+            <!-- Quick Presets com IDs para controle ativo dinâmico -->
+            <div class="flex flex-wrap items-center gap-2">
+                <span class="text-xs text-slate-400 mr-1"><i class="fa-solid fa-wand-magic-sparkles"></i> Gráfica / Padrão:</span>
+                <button id="btn-preset-padrao" onclick="applyPreset('padrao')" class="px-3 py-1.5 text-xs bg-brand-600 text-white hover:bg-brand-700 rounded-lg border border-brand-500 transition font-semibold">Padrão de Mercado</button>
+                <button id="btn-preset-uiclap" onclick="applyPreset('uiclap')" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200">UICLAP (600 DPI)</button>
+                <button id="btn-preset-kdp" onclick="applyPreset('kdp')" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200">Amazon KDP</button>
+                <button id="btn-preset-clube" onclick="applyPreset('clube')" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200">Clube de Autores</button>
+                <button id="btn-preset-custom" onclick="openCustomPresetModal()" class="px-3 py-1.5 text-xs bg-brand-600/20 hover:bg-brand-600/30 text-brand-400 rounded-lg border border-brand-500/30 transition font-medium"><i class="fa-solid fa-cog"></i> Outra</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN INTERFACE -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 lg:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- COLUNA ESQUERDA: ENTRADAS / FORMULÁRIOS -->
+        <section class="lg:col-span-5 flex flex-col gap-5">
+            
+            <!-- ACORDEON DE CONFIGURAÇÕES -->
+            <div class="flex flex-col gap-4 bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h2 class="font-bold text-lg text-white flex items-center gap-2">
+                        <i class="fa-solid fa-sliders text-brand-500"></i> Parâmetros do Livro
+                    </h2>
+                    <span class="text-xs text-slate-400 font-semibold uppercase bg-slate-900 px-2 py-1 rounded" id="selected-preset-name">Padrão de Mercado</span>
+                </div>
+
+                <!-- SEÇÃO 1: FORMATO E PÁGINAS -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Formato do Livro</label>
+                        <select id="input-format" onchange="handleFormatChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <option value="a5">A5 (148 x 210 mm)</option>
+                            <option value="14x21" selected>14 x 21 cm</option>
+                            <option value="16x23">16 x 23 cm</option>
+                            <option value="17x24">17 x 24 cm</option>
+                            <option value="21x21">Quadrado (21 x 21 cm)</option>
+                            <option value="a4">A4 (210 x 297 mm)</option>
+                            <option value="21x28">Carta (21 x 28 cm)</option>
+                            <option value="custom">Personalizado</option>
+                        </select>
+                    </div>
+
+                    <!-- Campos de tamanho customizado (Ocultos por padrão) -->
+                    <div id="custom-dims-wrapper" class="hidden grid grid-cols-2 gap-3 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Largura do Livro (mm)</label>
+                            <input type="number" id="input-custom-width" value="140" oninput="calculate()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Altura do Livro (mm)</label>
+                            <input type="number" id="input-custom-height" value="210" oninput="calculate()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                    </div>
+
+                    <!-- Quantidade de Páginas -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Nº de Páginas</label>
+                            <div class="relative">
+                                <input type="number" id="input-pages" value="100" min="20" max="3000" oninput="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <span class="absolute right-3 top-2 text-slate-500 text-xs">págs</span>
+                            </div>
+                        </div>
+
+                        <!-- Tipo de Capa -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Tipo de Capa</label>
+                            <select id="input-cover-type" onchange="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="brochura-250" selected>Brochura 250g</option>
+                                <option value="brochura-300">Brochura 300g</option>
+                                <option value="supremo-250">Supremo 250g</option>
+                                <option value="supremo-300">Supremo 300g</option>
+                                <option value="dura">Capa Dura (+ papelão)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Possui Orelhas -->
+                    <div class="grid grid-cols-2 gap-3 items-center pt-2">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Possui Orelhas?</label>
+                            <select id="input-has-flaps" onchange="handleFlapsChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="no">Não</option>
+                                <option value="yes" selected>Sim</option>
+                            </select>
+                        </div>
+
+                        <div id="flaps-size-wrapper">
+                            <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Tamanho Orelha</label>
+                            <select id="input-flaps-size" onchange="handleFlapCustomSize()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="60" selected>60 mm</option>
+                                <option value="70">70 mm</option>
+                                <option value="80">80 mm</option>
+                                <option value="custom">Personalizado</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Orelha Customizada (Oculta por padrão) -->
+                    <div id="custom-flap-size-wrapper" class="hidden grid grid-cols-2 gap-3 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Orelha Esq. (mm)</label>
+                            <input type="number" id="input-custom-flap-left" value="60" oninput="calculate()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Orelha Dir. (mm)</label>
+                            <input type="number" id="input-custom-flap-right" value="60" oninput="calculate()" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-2.5 py-1.5 text-sm text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 2: PAPEL DO MIOLO -->
+                <div class="border-t border-slate-800 pt-4 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Papel do Miolo</label>
+                        <button onclick="togglePaperAdmin()" class="text-xs text-brand-400 hover:text-brand-300"><i class="fa-solid fa-edit"></i> Banco de Papéis</button>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Tipo de Papel</label>
+                            <select id="input-paper-type" onchange="handlePaperTypeChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <!-- Preenchido dinamicamente via JS -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Gramatura</label>
+                            <select id="input-paper-weight" onchange="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <!-- Preenchido dinamicamente conforme papel -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEÇÃO 3: CONFIGURAÇÕES TÉCNICAS -->
+                <div class="border-t border-slate-800 pt-4 space-y-4">
+                    <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider">Configurações Técnicas</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Sangria (mm)</label>
+                            <input type="number" id="input-bleed" value="5" step="0.5" oninput="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Segurança (mm)</label>
+                            <input type="number" id="input-safety" value="10" step="0.5" oninput="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">Unidade</label>
+                            <select id="input-unit" onchange="handleUnitChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="mm">mm</option>
+                                <option value="cm">cm</option>
+                                <option value="px">px</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-slate-400 mb-1">DPI Exportação</label>
+                            <select id="input-dpi" onchange="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                                <option value="300" selected>300 DPI</option>
+                                <option value="600">600 DPI</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROJETO / HISTÓRICO -->
+            <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                <h3 class="font-bold text-white text-sm mb-3 flex items-center gap-2">
+                    <i class="fa-solid fa-folder-open text-brand-500"></i> Gestão de Projeto Ativo
+                </h3>
+                <div class="flex gap-2">
+                    <input type="text" id="project-name" value="Meu Livro Padrão" placeholder="Nome do projeto..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                    <button onclick="saveProject()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 rounded-xl text-sm font-semibold transition flex items-center gap-1">
+                        <i class="fa-solid fa-save"></i> Salvar
+                    </button>
+                </div>
+                
+                <!-- Histórico de Projetos -->
+                <div class="mt-4 pt-3 border-t border-slate-800">
+                    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider block mb-2">Projetos Salvos</span>
+                    <div id="projects-list" class="space-y-1.5 max-h-36 overflow-y-auto">
+                        <!-- Preenchido via JS -->
+                        <p class="text-xs text-slate-500 italic">Nenhum projeto salvo localmente.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- COLUNA DIREITA: PREVIEW, RESULTADOS & EXPORTAÇÃO -->
+        <section class="lg:col-span-7 flex flex-col gap-6">
+            
+            <!-- TABS DE VISUALIZAÇÃO -->
+            <div class="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-xl flex flex-col">
+                <div class="bg-slate-900 border-b border-slate-800 p-2 flex items-center justify-between">
+                    <div class="flex gap-1">
+                        <button id="tab-btn-2d" onclick="switchTab('2d')" class="px-4 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white transition flex items-center gap-2">
+                            <i class="fa-solid fa-map"></i> Gabarito 2D Técnico
+                        </button>
+                        <button id="tab-btn-3d" onclick="switchTab('3d')" class="px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-2">
+                            <i class="fa-solid fa-cube"></i> Simulador 3D
+                        </button>
+                    </div>
+                    <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1.5 rounded-lg border border-slate-700 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Alinhamento Realista
+                    </span>
+                </div>
+
+                <!-- CONTEÚDO DA TAB 2D (Gabarito SVG) -->
+                <div id="view-2d" class="p-6 flex flex-col items-center justify-center bg-slate-950 relative min-h-[460px] overflow-x-auto">
+                    <!-- Onde o SVG dinâmico será injetado -->
+                    <div id="svg-container" class="w-full"></div>
+                </div>
+
+                <!-- CONTEÚDO DA TAB 3D (Three.js) -->
+                <div id="view-3d" class="hidden p-6 flex flex-col items-center justify-center bg-slate-950 relative min-h-[460px]">
+                    <div id="canvas-3d-wrapper" class="w-full h-[380px] rounded-xl overflow-hidden bg-slate-900 border border-slate-800 relative">
+                        <canvas id="canvas-3d" class="w-full h-full"></canvas>
+                        <div class="absolute bottom-3 left-3 bg-slate-950/80 backdrop-blur text-[10px] text-slate-300 px-2 py-1 rounded border border-slate-700/50">
+                            Arraste para rotacionar o livro em 3D
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAINEL DE RESULTADOS COMPACTO E ELEGANTE -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-xl">
+                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Largura Total (Sangrada)</span>
+                    <span id="res-total-width" class="text-lg font-extrabold text-white">418.0 mm</span>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Altura Total (Sangrada)</span>
+                    <span id="res-total-height" class="text-lg font-extrabold text-white">220.0 mm</span>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Lombada</span>
+                    <span id="res-spine" class="text-lg font-extrabold text-brand-400">5.4 mm</span>
+                </div>
+                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800">
+                    <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 block mb-1">Dimensões Pixels</span>
+                    <span id="res-canva-px" class="text-base font-extrabold text-emerald-400">4937 x 2598 px</span>
+                </div>
+            </div>
+
+            <!-- FERRAMENTAS PREMIUM E INTEGRACÃO CANVA -->
+            <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-6">
+                <h3 class="font-bold text-white text-base flex items-center gap-2">
+                    <i class="fa-solid fa-crown text-amber-500"></i> Exportação Premium e Guias de Design
+                </h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- PDF Técnico -->
+                    <button onclick="exportTechnicalPDF()" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-brand-500 text-white p-4 rounded-xl text-left transition flex flex-col justify-between group">
+                        <div class="bg-brand-600/10 text-brand-400 p-2 rounded-lg self-start mb-3 group-hover:bg-brand-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-file-pdf text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-white">Salvar PDF Técnico</h4>
+                            <p class="text-[11px] text-slate-400 mt-1">Gabarito com cotas detalhadas, linhas de dobra, medidas e máscara completa.</p>
+                        </div>
+                    </button>
+
+                    <!-- Exportar PNG com Divisões -->
+                    <button onclick="exportHighResPNG()" class="bg-slate-900 hover:bg-slate-800 border border-slate-700 hover:border-brand-500 text-white p-4 rounded-xl text-left transition flex flex-col justify-between group">
+                        <div class="bg-brand-600/10 text-brand-400 p-2 rounded-lg self-start mb-3 group-hover:bg-brand-600 group-hover:text-white transition">
+                            <i class="fa-solid fa-file-image text-lg"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-sm text-white">Exportar PNG Guia</h4>
+                            <p class="text-[11px] text-slate-400 mt-1">Fundo transparente com divisões em pêssego, azul de segurança e medidas para o Canva.</p>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- GUIAS DE INTEGRAÇÃO (CANVA / PHOTOSHOP) -->
+                <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-info text-brand-400"></i> Como utilizar o Gabarito de Divisões no Canva:
+                    </h4>
+                    <ol class="text-xs text-slate-400 space-y-2 list-decimal list-inside">
+                        <li>Clique em <strong class="text-slate-200">Exportar PNG Guia</strong> para salvar a imagem guia com as medidas e transparência em alta resolução.</li>
+                        <li>No Canva, crie um design personalizado com as dimensões em pixels informadas no painel de resultados acima.</li>
+                        <li>Arraste o arquivo PNG salvo para dentro da sua página do Canva e estique-o até os cantos para cobrir 100% da folha.</li>
+                        <li>Sua área segura de design (Margem azul de segurança) está contínua ao redor de toda a capa (não dividida por painéis!), facilitando o alinhamento geral.</li>
+                        <li>Após montar sua arte, oculte ou apague a camada da imagem guia antes de exportar o PDF para impressão.</li>
+                    </ol>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- BANCO DE PAPÉIS (PAINEL ADMIN OCULTO) -->
+    <section id="paper-admin-panel" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+            <div class="bg-slate-950 border-b border-slate-800 p-4 flex items-center justify-between">
+                <h3 class="font-bold text-white flex items-center gap-2"><i class="fa-solid fa-edit text-brand-500"></i> Banco de Micragem (Tabela Técnico)</h3>
+                <button onclick="togglePaperAdmin()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-times"></i></button>
+            </div>
+            
+            <div class="p-6 overflow-y-auto space-y-4 flex-1">
+                <p class="text-xs text-slate-400">A micragem (espessura) de cada papel determina a largura final da lombada. Ajuste as gramaturas ou adicione novos tipos de papel abaixo conforme a ficha de sua gráfica.</p>
+                
+                <!-- Nova Entrada -->
+                <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                    <span class="text-xs font-bold text-white block">Adicionar Novo Papel/Gramatura</span>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <input type="text" id="admin-new-paper" placeholder="Ex: Offset" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                        <input type="text" id="admin-new-weight" placeholder="Ex: 75g" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                        <input type="number" id="admin-new-caliper" placeholder="Micragem (mm)" step="0.001" class="bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-xs text-slate-200">
+                        <button onclick="addPaperAdmin()" class="bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-xs font-bold transition">Adicionar</button>
+                    </div>
+                </div>
+
+                <!-- Tabela de papéis -->
+                <div class="border border-slate-800 rounded-xl overflow-hidden">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-slate-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
+                                <th class="p-3">Paper</th>
+                                <th class="p-3">Gramatura</th>
+                                <th class="p-3">Micragem (Caliper)</th>
+                                <th class="p-3 text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paper-admin-tbody" class="divide-y divide-slate-800">
+                            <!-- Preenchido via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MENSAGEM / MODAL DE AVISO -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-brand-600 border border-brand-500 text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 transition-all transform translate-y-10 opacity-0">
+        <i class="fa-solid fa-circle-check text-lg"></i>
+        <span id="toast-message" class="text-sm font-semibold">Salvo com sucesso!</span>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-4 px-6 text-center text-xs text-slate-500 mt-auto">
+        <p>© 2026 Book Cover Pro. Desenvolvido para Designers, Gráficas e Autores Independentes.</p>
+    </footer>
+
+    <!-- LOGIC SYSTEM IN JAVASCRIPT -->
+    <script>
+        // CONFIGURAÇÕES E BANCO DE DADOS PADRÃO (In-Memory persistido com localStorage se preferido)
+        let paperDatabase = {
+            "Offset": {
+                "75g": 0.094,
+                "90g": 0.108,
+                "120g": 0.135
+            },
+            "Pólen Soft": {
+                "80g": 0.110,
+                "90g": 0.120
+            },
+            "Couché Fosco": {
+                "90g": 0.080,
+                "115g": 0.095,
+                "150g": 0.120
+            },
+            "Couché Brilho": {
+                "90g": 0.078,
+                "115g": 0.092,
+                "150g": 0.115
+            },
+            "Reciclato": {
+                "75g": 0.105,
+                "90g": 0.126
+            },
+            "Papel Bíblico": {
+                "40g": 0.050
+            },
+            "Papel Jornal": {
+                "52g": 0.085
+            }
+        };
+
+        // Presets de Gráficas
+        const presets = {
+            "padrao": { name: "Padrão de Mercado", bleed: 5, safety: 10, unit: "mm", dpi: "300" },
+            "uiclap": { name: "UICLAP", bleed: 5, safety: 10, unit: "mm", dpi: "600" },
+            "kdp": { name: "Amazon KDP", bleed: 3.2, safety: 9.6, unit: "mm", dpi: "300" },
+            "clube": { name: "Clube de Autores", bleed: 5, safety: 10, unit: "mm", dpi: "300" }
+        };
+
+        // Estado Global da Aplicação - Modificado para iniciar no padrão de mercado (14x21, 100 págs, Brochura 250g, Offset 90g)
+        let currentTab = "2d";
+        let activeProject = {
+            name: "Meu Livro Padrão",
+            format: "14x21", 
+            customWidth: 140,
+            customHeight: 210,
+            pages: 100,
+            coverType: "brochura-250",
+            hasFlaps: "yes",
+            flapsSize: "60",
+            customFlapLeft: 60,
+            customFlapRight: 60,
+            paperType: "Offset",
+            paperWeight: "90g",
+            bleed: 5,
+            safety: 10,
+            unit: "mm",
+            dpi: "300"
+        };
+
+        // Três.js variávies globais
+        let scene, camera, renderer, bookMesh;
+
+        // INICIALIZAÇÃO
+        window.onload = function() {
+            // Tentar recuperar banco de papéis modificado do localStorage
+            const localPaperDb = localStorage.getItem("bcp_paper_db");
+            if (localPaperDb) {
+                try {
+                    paperDatabase = JSON.parse(localPaperDb);
+                } catch(e) { console.error("Erro ao carregar banco de papéis local", e); }
+            }
+
+            // Inicializar seletores de papéis
+            populatePaperDropdowns();
+            
+            // Carregar Histórico
+            renderHistoryList();
+
+            // Sincronizar inputs com o estado padrão
+            syncInputsFromState();
+
+            // Rodar cálculo inicial
+            calculate();
+
+            // Inicializar cena 3D
+            init3D();
+        };
+
+        // POPULA DROPDOWNS DE PAPEL
+        function populatePaperDropdowns() {
+            const paperTypeSelect = document.getElementById("input-paper-type");
+            paperTypeSelect.innerHTML = "";
+            
+            Object.keys(paperDatabase).forEach(type => {
+                const opt = document.createElement("option");
+                opt.value = type;
+                opt.textContent = type;
+                if (type === activeProject.paperType) opt.selected = true;
+                paperTypeSelect.appendChild(opt);
+            });
+
+            handlePaperTypeChange(false); // Popula gramatura sem recalcular ainda
+        }
+
+        function handlePaperTypeChange(shouldRecalculate = true) {
+            const paperType = document.getElementById("input-paper-type").value;
+            const paperWeightSelect = document.getElementById("input-paper-weight");
+            paperWeightSelect.innerHTML = "";
+
+            if (paperDatabase[paperType]) {
+                Object.keys(paperDatabase[paperType]).forEach(weight => {
+                    const opt = document.createElement("option");
+                    opt.value = weight;
+                    opt.textContent = weight;
+                    if (weight === activeProject.paperWeight) opt.selected = true;
+                    paperWeightSelect.appendChild(opt);
+                });
+            }
+
+            if (shouldRecalculate) calculate();
+        }
+
+        // SINCRONIZA ESTADO PARA OS INPUTS DA TELA
+        function syncInputsFromState() {
+            document.getElementById("project-name").value = activeProject.name;
+            document.getElementById("input-format").value = activeProject.format;
+            document.getElementById("input-custom-width").value = activeProject.customWidth;
+            document.getElementById("input-custom-height").value = activeProject.customHeight;
+            document.getElementById("input-pages").value = activeProject.pages;
+            document.getElementById("input-cover-type").value = activeProject.coverType;
+            document.getElementById("input-has-flaps").value = activeProject.hasFlaps;
+            document.getElementById("input-flaps-size").value = activeProject.flapsSize;
+            document.getElementById("input-custom-flap-left").value = activeProject.customFlapLeft;
+            document.getElementById("input-custom-flap-right").value = activeProject.customFlapRight;
+            document.getElementById("input-paper-type").value = activeProject.paperType;
+            handlePaperTypeChange(false);
+            document.getElementById("input-paper-weight").value = activeProject.paperWeight;
+            document.getElementById("input-bleed").value = activeProject.bleed;
+            document.getElementById("input-safety").value = activeProject.safety;
+            document.getElementById("input-unit").value = activeProject.unit;
+            document.getElementById("input-dpi").value = activeProject.dpi;
+
+            handleFormatChange(false);
+            handleFlapsChange(false);
+        }
+
+        // ATUALIZA VARIÁVEIS A PARTIR DO INPUT DO USUÁRIO
+        function updateStateFromInputs() {
+            activeProject.name = document.getElementById("project-name").value;
+            activeProject.format = document.getElementById("input-format").value;
+            activeProject.customWidth = parseFloat(document.getElementById("input-custom-width").value) || 140;
+            activeProject.customHeight = parseFloat(document.getElementById("input-custom-height").value) || 210;
+            activeProject.pages = parseInt(document.getElementById("input-pages").value) || 100;
+            activeProject.coverType = document.getElementById("input-cover-type").value;
+            activeProject.hasFlaps = document.getElementById("input-has-flaps").value;
+            activeProject.flapsSize = document.getElementById("input-flaps-size").value;
+            activeProject.customFlapLeft = parseFloat(document.getElementById("input-custom-flap-left").value) || 60;
+            activeProject.customFlapRight = parseFloat(document.getElementById("input-custom-flap-right").value) || 60;
+            activeProject.paperType = document.getElementById("input-paper-type").value;
+            activeProject.paperWeight = document.getElementById("input-paper-weight").value;
+            activeProject.bleed = parseFloat(document.getElementById("input-bleed").value) || 0;
+            activeProject.safety = parseFloat(document.getElementById("input-safety").value) || 0;
+            activeProject.unit = document.getElementById("input-unit").value;
+            activeProject.dpi = document.getElementById("input-dpi").value;
+        }
+
+        // EVENTOS DE FORMATO
+        function handleFormatChange(shouldRecalculate = true) {
+            const fmt = document.getElementById("input-format").value;
+            const customWrapper = document.getElementById("custom-dims-wrapper");
+            if (fmt === "custom") {
+                customWrapper.classList.remove("hidden");
+            } else {
+                customWrapper.classList.add("hidden");
+            }
+            if (shouldRecalculate) calculate();
+        }
+
+        // EVENTOS DE ORELHA
+        function handleFlapsChange(shouldRecalculate = true) {
+            const value = document.getElementById("input-has-flaps").value;
+            const wrapper = document.getElementById("flaps-size-wrapper");
+            const customWrapper = document.getElementById("custom-flap-size-wrapper");
+
+            if (value === "yes") {
+                wrapper.classList.remove("hidden");
+                handleFlapCustomSize(false);
+            } else {
+                wrapper.classList.add("hidden");
+                customWrapper.classList.add("hidden");
+            }
+            if (shouldRecalculate) calculate();
+        }
+
+        function handleFlapCustomSize(shouldRecalculate = true) {
+            const sizeValue = document.getElementById("input-flaps-size").value;
+            const customWrapper = document.getElementById("custom-flap-size-wrapper");
+
+            if (sizeValue === "custom") {
+                customWrapper.classList.remove("hidden");
+            } else {
+                customWrapper.classList.add("hidden");
+            }
+            if (shouldRecalculate) calculate();
+        }
+
+        // MOTOR DE CÁLCULO CENTRAL (Baseado em Pesquisa Técnica e Padrão de Mercado)
+        let calcResults = {};
+
+        function calculate() {
+            updateStateFromInputs();
+
+            // 1. Determinar dimensões básicas da página (Capa / Contracapa)
+            let bookW = 140; // mm
+            let bookH = 210; // mm
+
+            switch(activeProject.format) {
+                case "a5": bookW = 148; bookH = 210; break;
+                case "14x21": bookW = 140; bookH = 210; break;
+                case "16x23": bookW = 160; bookH = 230; break;
+                case "17x24": bookW = 170; bookH = 240; break;
+                case "21x21": bookW = 210; bookH = 210; break;
+                case "a4": bookW = 210; bookH = 297; break;
+                case "21x28": bookW = 210; bookH = 280; break;
+                case "custom":
+                    bookW = activeProject.customWidth;
+                    bookH = activeProject.customHeight;
+                    break;
+            }
+
+            // 2. Cálculo da Lombada (Fórmula: Lombada = Folhas * Micragem)
+            let micragem = 0.108; // default para Offset 90g
+            if (paperDatabase[activeProject.paperType] && paperDatabase[activeProject.paperType][activeProject.paperWeight]) {
+                micragem = paperDatabase[activeProject.paperType][activeProject.paperWeight];
+            }
+            
+            let folhas = activeProject.pages / 2;
+            let spineWidth = folhas * micragem;
+
+            // Compensação para Tipo de Capa conforme regras industriais
+            let coverThicknessComp = 0;
+            if (activeProject.coverType === "brochura-300" || activeProject.coverType === "supremo-300") {
+                coverThicknessComp = 0.4;
+            } else if (activeProject.coverType === "dura") {
+                coverThicknessComp = 1.5; // Espessura compensada para papelão rígido (Hinges/Rebaixo de Capa Dura)
+            }
+            
+            // Sincronização de arredondamento técnico de 1 decimal
+            spineWidth = parseFloat((spineWidth + coverThicknessComp).toFixed(1));
+
+            // 3. Orelhas
+            let flapLeft = 0;
+            let flapRight = 0;
+            if (activeProject.hasFlaps === "yes") {
+                if (activeProject.flapsSize === "custom") {
+                    flapLeft = activeProject.customFlapLeft;
+                    flapRight = activeProject.customFlapRight;
+                } else {
+                    let val = parseFloat(activeProject.flapsSize);
+                    flapLeft = val;
+                    flapRight = val;
+                }
+            }
+
+            // 4. Medidas Finais do Gabarito Aberto
+            let totalW = flapLeft + bookW + spineWidth + bookW + flapRight;
+            let totalH = bookH;
+
+            // Adição de Sangria
+            let bleed = activeProject.bleed;
+            let finalW = totalW + (bleed * 2);
+            let finalH = totalH + (bleed * 2);
+
+            // Resolução baseada no DPI selecionado (300 ou 600 DPI)
+            let dpi = parseInt(activeProject.dpi) || 300;
+            let mmToPx = dpi / 25.4;
+            let canvaW = Math.round(finalW * mmToPx);
+            let canvaH = Math.round(finalH * mmToPx);
+
+            // Salvar resultados no escopo
+            calcResults = {
+                bookWidth: bookW,
+                bookHeight: bookH,
+                spineWidth: spineWidth,
+                flapLeft: flapLeft,
+                flapRight: flapRight,
+                bleed: bleed,
+                safety: activeProject.safety,
+                totalWidthNoBleed: totalW,
+                totalHeightNoBleed: totalH,
+                finalWidthWithBleed: finalW,
+                finalHeightWithBleed: finalH,
+                canvaWidth: canvaW,
+                canvaHeight: canvaH,
+                dpi: dpi,
+                mmToPx: mmToPx
+            };
+
+            // Atualiza o estado visual das marcas de presets para manter sincronizado
+            checkPresetMatch();
+
+            // Atualizar UI
+            renderResults();
+            renderSVG();
+            update3DModel();
+        }
+
+        // DETECTA SE AS CONFIGURAÇÕES ATUAIS CONFEREM COM ALGUM PRESET E AJUSTA O DESTAQUE DO BOTÃO CORRESPONDENTE
+        function checkPresetMatch() {
+            const bleed = parseFloat(document.getElementById("input-bleed").value) || 0;
+            const safety = parseFloat(document.getElementById("input-safety").value) || 0;
+            const unit = document.getElementById("input-unit").value;
+            const dpi = document.getElementById("input-dpi").value;
+            
+            let matchedKey = 'custom';
+            for (const key in presets) {
+                const p = presets[key];
+                if (p.bleed === bleed && p.safety === safety && p.unit === unit && p.dpi === dpi) {
+                    matchedKey = key;
+                    break;
+                }
+            }
+            
+            const presetNameSpan = document.getElementById("selected-preset-name");
+            if (presetNameSpan) {
+                presetNameSpan.textContent = matchedKey === 'custom' ? 'Padrão Customizado' : presets[matchedKey].name;
+            }
+            
+            updatePresetButtonsUI(matchedKey);
+        }
+
+        // ATUALIZA ESTILIZAÇÃO DOS BOTÕES DE PRESET NO HEADER
+        function updatePresetButtonsUI(activeKey) {
+            const presetsKeys = ['padrao', 'uiclap', 'kdp', 'clube', 'custom'];
+            
+            presetsKeys.forEach(key => {
+                const btn = document.getElementById(`btn-preset-${key}`);
+                if (!btn) return;
+                
+                if (key === activeKey) {
+                    // Estado Ativo - Fica em Roxo (Brand) destacado
+                    btn.className = "px-3 py-1.5 text-xs bg-brand-600 text-white hover:bg-brand-700 rounded-lg border border-brand-500 transition font-semibold shadow-md shadow-brand-500/10";
+                } else {
+                    // Estado Inativo - Retorna ao outline escuro
+                    if (key === 'custom') {
+                        btn.className = "px-3 py-1.5 text-xs bg-brand-600/20 hover:bg-brand-600/30 text-brand-400 rounded-lg border border-brand-500/30 transition font-medium";
+                    } else {
+                        btn.className = "px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200";
+                    }
+                }
+            });
+        }
+
+        // CONVERTER VALOR DE MEDIDA PARA A UNIDADE SELECIONADA
+        function formatVal(mmValue, forceUnit = null) {
+            const unit = forceUnit || activeProject.unit;
+            if (unit === "cm") {
+                return (mmValue / 10).toFixed(2).replace('.', ',') + " cm";
+            } else if (unit === "px") {
+                return Math.round(mmValue * calcResults.mmToPx) + " px";
+            }
+            return mmValue.toFixed(1).replace('.', ',') + " mm";
+        }
+
+        // ATUALIZA PAINEL DE RESULTADOS
+        function renderResults() {
+            document.getElementById("res-total-width").textContent = formatVal(calcResults.finalWidthWithBleed);
+            document.getElementById("res-total-height").textContent = formatVal(calcResults.finalHeightWithBleed);
+            document.getElementById("res-spine").textContent = formatVal(calcResults.spineWidth);
+            document.getElementById("res-canva-px").textContent = `${calcResults.canvaWidth} x ${calcResults.canvaHeight} px`;
+        }
+
+        // APLICA PRESETS DE GRÁFICAS PARCEIRAS
+        function applyPreset(presetKey) {
+            const preset = presets[presetKey];
+            if (!preset) return;
+
+            document.getElementById("input-bleed").value = preset.bleed;
+            document.getElementById("input-safety").value = preset.safety;
+            document.getElementById("input-unit").value = preset.unit;
+            document.getElementById("input-dpi").value = preset.dpi;
+            
+            showToast(`Preset ${preset.name} carregado em ${preset.dpi} DPI!`);
+            calculate();
+        }
+
+        function openCustomPresetModal() {
+            showToast("Edite as configurações de sangria, margens e DPI livremente.", "info");
+            updatePresetButtonsUI('custom');
+        }
+
+        // GERAR GABARITO VISUAL EM SVG DINÂMICO COPIANDO O MODELO DA IMAGEM
+        function renderSVG() {
+            const container = document.getElementById("svg-container");
+            container.innerHTML = "";
+
+            // Dimensões do Canvas SVG
+            const viewW = 1050;
+            const viewH = 550;
+
+            const b = calcResults.bleed;
+            const s = calcResults.safety;
+            const fl = calcResults.flapLeft;
+            const fr = calcResults.flapRight;
+            const sp = calcResults.spineWidth;
+            const bw = calcResults.bookWidth;
+            const bh = calcResults.bookHeight;
+            const finalW = calcResults.finalWidthWithBleed;
+            const finalH = calcResults.finalHeightWithBleed;
+
+            // Escala e centralização dinâmica do gabarito dentro do SVG
+            const scale = 860 / finalW;
+            const drawW = finalW * scale;
+            const drawH = finalH * scale;
+
+            const x_off = (viewW - drawW) / 2;
+            const y_off = Math.max(65, (viewH - drawH) / 2 + 20); // Garantindo folga para evitar clipping superior
+
+            const scaleBleed = b * scale;
+            const scaleSafety = s * scale;
+
+            let svgHtml = `<svg width="100%" height="100%" viewBox="0 0 ${viewW} ${viewH}" xmlns="http://www.w3.org/2000/svg" class="mx-auto" style="background:#090d16; border-radius: 12px;">`;
+            
+            // Definições de marcadores e filtros
+            svgHtml += `<defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#ef4444" />
+                </marker>
+                <marker id="arrowBlue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1 L 10 5 L 0 9 z" fill="#38bdf8" />
+                </marker>
+            </defs>`;
+
+            // GRUPO DE DESENHO PRINCIPAL DO LIVRO
+            svgHtml += `<g transform="translate(${x_off}, ${y_off})">`;
+
+            // 1. SANGRIAS EXTERNAS (Borda Laranja de Sangria - Espaço Físico Adicional de 5mm)
+            svgHtml += `<rect x="0" y="0" width="${drawW}" height="${drawH}" fill="#332115" stroke="#f97316" stroke-width="2.5" />`;
+            
+            // 2. LINHA DE CORTE REAL (Área Interna Sem Sangria - Retângulo com a Linha Vermelha de Corte)
+            svgHtml += `<rect x="${scaleBleed}" y="${scaleBleed}" width="${drawW - (scaleBleed*2)}" height="${drawH - (scaleBleed*2)}" fill="#0f172a" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,4" />`;
+
+            // 3. MARGEM DE SEGURANÇA UNIFICADA E CONTÍNUA
+            const safetyX = scaleBleed + scaleSafety/2;
+            const safetyY = scaleBleed + scaleSafety/2;
+            const safetyW = drawW - (scaleBleed*2) - scaleSafety;
+            const safetyH = drawH - (scaleBleed*2) - scaleSafety;
+            svgHtml += `<rect x="${safetyX}" y="${safetyY}" width="${safetyW}" height="${safetyH}" fill="none" stroke="#0ea5e9" stroke-width="${scaleSafety}" stroke-opacity="0.2" />`;
+
+            // 4. DIVISORES DE PAINÉIS (Vertical Folds) E MARCAÇÕES DE TAMANHO DOS PAINÉIS INDIVIDUAIS
+            let currX = scaleBleed;
+
+            // Determinar Y dinâmico para evitar colisões
+            let labelY = scaleBleed + (bh * scale) * 0.18;
+            let ccBracketY = scaleBleed + (bh * scale) * 0.38;
+
+            // Função auxiliar para renderizar cotas e braçadeiras ("brackets")
+            function getCotaHtml(x1, x2, y, labelText, strokeColor = "#475569", fontColor = "#94a3b8") {
+                const labelW = x2 - x1;
+                const bracketDepth = 15;
+                const stemLength = 12;
+                const inset = Math.min(15, labelW * 0.15); // Braçadeira autoadaptativa anti-colisão
+                return `
+                    <path d="M ${x1 + inset} ${y} L ${x1 + inset} ${y + bracketDepth} L ${x2 - inset} ${y + bracketDepth} L ${x2 - inset} ${y}" fill="none" stroke="${strokeColor}" stroke-width="1.2" />
+                    <line x1="${(x1+x2)/2}" y1="${y + bracketDepth}" x2="${(x1+x2)/2}" y2="${y + bracketDepth + stemLength}" stroke="${strokeColor}" stroke-width="1.2" />
+                    <!-- Medidas Padronizadas -->
+                    <text x="${(x1+x2)/2}" y="${y + bracketDepth + stemLength + 12}" fill="${fontColor}" font-size="10" font-weight="bold" text-anchor="middle">${labelText}</text>
+                    <text x="${(x1+x2)/2}" y="${y + bracketDepth + stemLength + 24}" fill="${strokeColor}" font-size="8.5" font-weight="600" text-anchor="middle">(${Math.round((labelW / scale) * calcResults.mmToPx)} px)</text>
+                `;
+            }
+
+            // Orelha Esquerda
+            if (fl > 0) {
+                let s_fl = fl * scale;
+                svgHtml += `<line x1="${currX + s_fl}" y1="${scaleBleed}" x2="${currX + s_fl}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
+                svgHtml += `<text x="${currX + s_fl/2}" y="${labelY}" fill="#38bdf8" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">ORELHA</text>`;
+                svgHtml += getCotaHtml(currX, currX + s_fl, ccBracketY, `Largura: ${fl.toFixed(1).replace('.', ',')} mm + ${b.toFixed(1).replace('.', ',')} mm`);
+                currX += s_fl;
+            }
+
+            // Contracapa
+            let s_bw = bw * scale;
+            svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
+            svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CONTRACAPA</text>`;
+            svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Largura: ${bw.toFixed(1).replace('.', ',')} mm`);
+            currX += s_bw;
+
+            // Lombada
+            let s_sp = sp * scale;
+            svgHtml += `<rect x="${currX}" y="${scaleBleed}" width="${s_sp}" height="${bh * scale}" fill="#1e1b4b" fill-opacity="0.3" stroke="#818cf8" stroke-width="1" />`;
+            svgHtml += `<line x1="${currX + s_sp}" y1="${scaleBleed}" x2="${currX + s_sp}" y2="${drawH - scaleBleed}" stroke="#818cf8" stroke-width="1.2" />`;
+            
+            // Texto vertical para lombada
+            svgHtml += `<g transform="translate(${currX + s_sp/2}, ${scaleBleed + (bh*scale)/2}) rotate(-90)">`;
+            svgHtml += `<text x="0" y="4" fill="#818cf8" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="2">LOMBADA</text>`;
+            svgHtml += `</g>`;
+
+            // Ponteiro indicador com linha de chamada diagonal inteligente (Evita colisões se for lombada estreita)
+            let spX = currX + s_sp/2;
+            let spY = scaleBleed + (bh * scale) * 0.75;
+            if (s_sp < 75) {
+                svgHtml += `<path d="M ${spX} ${spY} L ${spX + 25} ${spY + 25} L ${spX + 65} ${spY + 25}" fill="none" stroke="#818cf8" stroke-width="1.2" />`;
+                svgHtml += `<circle cx="${spX}" cy="${spY}" r="2.5" fill="#818cf8" />`;
+                svgHtml += `<text x="${spX + 70}" y="${spY + 21}" fill="#a5b4fc" font-size="10" font-weight="bold" text-anchor="start">Largura: ${sp.toFixed(1).replace('.', ',')} mm</text>`;
+                svgHtml += `<text x="${spX + 70}" y="${spY + 31}" fill="#818cf8" font-size="8.5" font-weight="600" text-anchor="start">(${Math.round(sp*calcResults.mmToPx)} px)</text>`;
+            } else {
+                svgHtml += getCotaHtml(currX, currX + s_sp, ccBracketY, `Lombada: ${sp.toFixed(1).replace('.', ',')} mm`, "#818cf8", "#a5b4fc");
+            }
+
+            currX += s_sp;
+
+            // Capa (Frente)
+            svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
+            svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CAPA PRINCIPAL</text>`;
+            svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Largura: ${bw.toFixed(1).replace('.', ',')} mm`);
+            currX += s_bw;
+
+            // Orelha Direita
+            if (fr > 0) {
+                let s_fr = fr * scale;
+                svgHtml += `<text x="${currX + s_fr/2}" y="${labelY}" fill="#38bdf8" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">ORELHA</text>`;
+                svgHtml += getCotaHtml(currX, currX + s_fr, ccBracketY, `Largura: ${fr.toFixed(1).replace('.', ',')} mm + ${b.toFixed(1).replace('.', ',')} mm`);
+            }
+
+            // COTA GLOBAL SUPERIOR (Largura Total - Ajuste dinâmico anti-corte de respiro)
+            svgHtml += `<line x1="0" y1="-30" x2="${drawW}" y2="-30" stroke="#ffffff" stroke-width="1.5" />`;
+            svgHtml += `<line x1="0" y1="-35" x2="0" y2="-25" stroke="#ffffff" stroke-width="1.5" />`;
+            svgHtml += `<line x1="${drawW}" y1="-35" x2="${drawW}" y2="-25" stroke="#ffffff" stroke-width="1.5" />`;
+            svgHtml += `<text x="${drawW/2}" y="-40" fill="#ffffff" font-size="13" font-weight="extrabold" text-anchor="middle">Largura Total: ${calcResults.totalWidthNoBleed.toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaWidth} px)</text>`;
+
+            // COTA GLOBAL LATERAL DIREITA (Altura Total - Deslocamento otimizado anti-corte lateral)
+            let cotaYStart = 0;
+            let cotaYEnd = drawH;
+            svgHtml += `<g transform="translate(${drawW + 25}, 0)">`;
+            svgHtml += `<line x1="0" y1="${cotaYStart}" x2="0" y2="${cotaYEnd}" stroke="#ffffff" stroke-width="1.5" />`;
+            svgHtml += `<line x1="-5" y1="${cotaYStart}" x2="5" y2="${cotaYStart}" stroke="#ffffff" stroke-width="1.5" />`;
+            svgHtml += `<line x1="-5" y1="${cotaYEnd}" x2="5" y2="${cotaYEnd}" stroke="#ffffff" stroke-width="1.5" />`;
+            svgHtml += `<text x="12" y="${drawH/2}" fill="#ffffff" font-size="13" font-weight="extrabold" transform="rotate(90, 12, ${drawH/2})">Altura Total: ${bh.toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)</text>`;
+            svgHtml += `</g>`;
+
+            // PONTEIROS DE LEGENDA TÉCNICA (SANGRE E MARGEM DE SEGURANÇA UNIFICADA)
+            let ptrSangriaX = scaleBleed / 2;
+            let ptrSangriaY = drawH - 2;
+            svgHtml += `<path d="M 220, ${drawH + 45} L 220, ${drawH + 18} L ${ptrSangriaX}, ${ptrSangriaY}" fill="none" stroke="#ef4444" stroke-width="1.2" marker-end="url(#arrow)" />`;
+            svgHtml += `<text x="220" y="${drawH + 58}" fill="#f97316" font-size="10.5" font-weight="bold" text-anchor="middle">Sangria: ${b.toFixed(1)}mm</text>`;
+
+            let ptrSegX = scaleBleed + scaleSafety / 2;
+            let ptrSegY = drawH - scaleBleed - scaleSafety / 2;
+            svgHtml += `<path d="M ${drawW - 220}, ${drawH + 45} L ${drawW - 220}, ${drawH + 18} L ${ptrSegX}, ${ptrSegY}" fill="none" stroke="#38bdf8" stroke-width="1.2" marker-end="url(#arrowBlue)" />`;
+            svgHtml += `<text x="${drawW - 220}" y="${drawH + 58}" fill="#38bdf8" font-size="10.5" font-weight="bold" text-anchor="middle">Margem de segurança: ${s.toFixed(1)}mm</text>`;
+
+            svgHtml += `</g></svg>`;
+            container.innerHTML = svgHtml;
+        }
+
+        // TABS SWITCHER
+        function switchTab(tab) {
+            currentTab = tab;
+            const btn2d = document.getElementById("tab-btn-2d");
+            const btn3d = document.getElementById("tab-btn-3d");
+            const view2d = document.getElementById("view-2d");
+            const view3d = document.getElementById("view-3d");
+
+            if (tab === "2d") {
+                btn2d.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white transition flex items-center gap-2";
+                btn3d.className = "px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-2";
+                view2d.classList.remove("hidden");
+                view3d.classList.add("hidden");
+            } else {
+                btn3d.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white transition flex items-center gap-2";
+                btn2d.className = "px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-2";
+                view3d.classList.remove("hidden");
+                view2d.classList.add("hidden");
+                
+                if (renderer) {
+                    const wrapper = document.getElementById("canvas-3d-wrapper");
+                    renderer.setSize(wrapper.clientWidth, wrapper.clientHeight);
+                }
+            }
+        }
+
+        // SIMULADOR 3D COM THREE.JS
+        function init3D() {
+            const wrapper = document.getElementById("canvas-3d-wrapper");
+            const canvas = document.getElementById("canvas-3d");
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0f172a); // Slate-900
+
+            camera = new THREE.PerspectiveCamera(45, wrapper.clientWidth / wrapper.clientHeight, 0.1, 1000);
+            camera.position.set(0, 3, 6);
+
+            renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+            renderer.setSize(wrapper.clientWidth, wrapper.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.shadowMap.enabled = true;
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            dirLight.position.set(5, 8, 5);
+            dirLight.castShadow = true;
+            scene.add(dirLight);
+
+            const floorGeo = new THREE.PlaneGeometry(10, 10);
+            const floorMat = new THREE.ShadowMaterial({ opacity: 0.15 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -1.2;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            createBookMesh();
+
+            // Rotação Interativa com o Mouse
+            let isDragging = false;
+            let previousMousePosition = { x: 0, y: 0 };
+
+            canvas.addEventListener('mousedown', (e) => { isDragging = true; });
+            canvas.addEventListener('mousemove', (e) => {
+                const deltaMove = {
+                    x: e.offsetX - previousMousePosition.x,
+                    y: e.offsetY - previousMousePosition.y
+                };
+
+                if (isDragging && bookMesh) {
+                    bookMesh.rotation.y += deltaMove.x * 0.005;
+                    bookMesh.rotation.x += deltaMove.y * 0.005;
+                }
+
+                previousMousePosition = { x: e.offsetX, y: e.offsetY };
+            });
+
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            
+            // Toque para Mobile
+            canvas.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                const touch = e.touches[0];
+                previousMousePosition = { x: touch.clientX, y: touch.clientY };
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                if (!isDragging || !bookMesh) return;
+                const touch = e.touches[0];
+                const deltaMove = {
+                    x: touch.clientX - previousMousePosition.x,
+                    y: touch.clientY - previousMousePosition.y
+                };
+
+                bookMesh.rotation.y += deltaMove.x * 0.008;
+                bookMesh.rotation.x += deltaMove.y * 0.008;
+
+                previousMousePosition = { x: touch.clientX, y: touch.clientY };
+            });
+
+            canvas.addEventListener('touchend', () => { isDragging = false; });
+
+            function animate() {
+                requestAnimationFrame(animate);
+                if (!isDragging && bookMesh) {
+                    bookMesh.rotation.y += 0.003;
+                }
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            window.addEventListener('resize', () => {
+                if (renderer && wrapper) {
+                    camera.aspect = wrapper.clientWidth / wrapper.clientHeight;
+                    camera.updateProjectionMatrix();
+                    renderer.setSize(wrapper.clientWidth, wrapper.clientHeight);
+                }
+            });
+        }
+
+        function createBookMesh() {
+            if (bookMesh) scene.remove(bookMesh);
+
+            const scaleFactor = 0.01; 
+            const w = calcResults.bookWidth * scaleFactor;
+            const h = calcResults.bookHeight * scaleFactor;
+            const d = Math.max(calcResults.spineWidth * scaleFactor, 0.05);
+
+            const geometry = new THREE.BoxGeometry(w, h, d);
+
+            // Textura dinâmica do modelo 3D desenhada em canvas temporário
+            const canvasTex = document.createElement('canvas');
+            canvasTex.width = 1024;
+            canvasTex.height = 1024;
+            const ctx = canvasTex.getContext('2d');
+
+            ctx.fillStyle = "#1e1b4b"; // Dark purple
+            ctx.fillRect(0, 0, 1024, 1024);
+
+            // Lombada
+            ctx.fillStyle = "#312e81";
+            ctx.fillRect(495, 0, 34, 1024);
+
+            // Guias e Textos simulação
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 44px Arial";
+            ctx.fillText("LIVRO 3D ATIVO", 650, 480);
+            ctx.font = "26px Arial";
+            ctx.fillStyle = "#93c5fd";
+            ctx.fillText("Simulação de Capa", 650, 530);
+
+            ctx.fillStyle = "#ffffff";
+            ctx.fillText("CONTRACAPA", 100, 480);
+
+            ctx.save();
+            ctx.translate(512, 512);
+            ctx.rotate(-Math.PI / 2);
+            ctx.font = "bold 24px Arial";
+            ctx.fillStyle = "#c084fc";
+            ctx.fillText("LOMBADA TÉCNICA", -200, 8);
+            ctx.restore();
+
+            const texture = new THREE.CanvasTexture(canvasTex);
+
+            const coverMaterial = new THREE.MeshPhongMaterial({ map: texture, shininess: 85 });
+            const pageMaterial = new THREE.MeshPhongMaterial({ color: 0xfefefe, roughness: 1.0 });
+
+            const materials = [
+                pageMaterial,    // Direita
+                coverMaterial,   // Lombada
+                pageMaterial,    // Topo
+                pageMaterial,    // Base
+                coverMaterial,   // Capa (Frente)
+                coverMaterial    // Contracapa
+            ];
+
+            bookMesh = new THREE.Mesh(geometry, materials);
+            bookMesh.castShadow = true;
+            bookMesh.rotation.set(0.3, -0.6, 0);
+            scene.add(bookMesh);
+        }
+
+        function update3DModel() {
+            if (bookMesh) {
+                createBookMesh();
+            }
+        }
+
+        // BANCO DE PAPÉIS - GESTÃO ADMIN
+        function togglePaperAdmin() {
+            const panel = document.getElementById("paper-admin-panel");
+            panel.classList.toggle("hidden");
+            if (!panel.classList.contains("hidden")) {
+                renderPaperAdminTable();
+            }
+        }
+
+        function renderPaperAdminTable() {
+            const tbody = document.getElementById("paper-admin-tbody");
+            tbody.innerHTML = "";
+
+            Object.keys(paperDatabase).forEach(paperType => {
+                Object.keys(paperDatabase[paperType]).forEach(weight => {
+                    const caliper = paperDatabase[paperType][weight];
+                    
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-800 transition text-slate-300";
+                    tr.innerHTML = `
+                        <td class="p-3 font-semibold">${paperType}</td>
+                        <td class="p-3">${weight}</td>
+                        <td class="p-3">${caliper.toFixed(4)} mm</td>
+                        <td class="p-3 text-center">
+                            <button onclick="deletePaperAdmin('${paperType}', '${weight}')" class="text-rose-500 hover:text-rose-400 font-medium px-2 py-1"><i class="fa-solid fa-trash-can"></i></button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        function addPaperAdmin() {
+            const name = document.getElementById("admin-new-paper").value.trim();
+            const weight = document.getElementById("admin-new-weight").value.trim();
+            const caliper = parseFloat(document.getElementById("admin-new-caliper").value);
+
+            if (!name || !weight || isNaN(caliper)) {
+                showToast("Preencha todos os dados corretamente!", "error");
+                return;
+            }
+
+            if (!paperDatabase[name]) {
+                paperDatabase[name] = {};
+            }
+
+            paperDatabase[name][weight] = caliper;
+            
+            localStorage.setItem("bcp_paper_db", JSON.stringify(paperDatabase));
+
+            document.getElementById("admin-new-weight").value = "";
+            document.getElementById("admin-new-caliper").value = "";
+            
+            populatePaperDropdowns();
+            renderPaperAdminTable();
+            showToast("Papel cadastrado com sucesso!");
+            calculate();
+        }
+
+        function deletePaperAdmin(paperType, weight) {
+            if (confirm(`Excluir o papel ${paperType} - ${weight}?`)) {
+                delete paperDatabase[paperType][weight];
+                
+                if (Object.keys(paperDatabase[paperType]).length === 0) {
+                    delete paperDatabase[paperType];
+                }
+
+                localStorage.setItem("bcp_paper_db", JSON.stringify(paperDatabase));
+                populatePaperDropdowns();
+                renderPaperAdminTable();
+                showToast("Item removido do banco técnico.");
+                calculate();
+            }
+        }
+
+        // EXPORTAÇÕES PREMIUM
+
+        // 1. PDF Técnico de Impressão Vetorial Completo Com Margem Unificada e Cotas/Medidas Detalhadas (Anti-Corte)
+        function exportTechnicalPDF() {
+            const { jsPDF } = window.jspdf;
+            const totalW = calcResults.finalWidthWithBleed;
+            const totalH = calcResults.finalHeightWithBleed;
+            
+            const doc = new jsPDF({
+                orientation: "landscape",
+                unit: "mm",
+                format: [totalW, totalH]
+            });
+
+            const b = calcResults.bleed;
+            const s = calcResults.safety;
+            const fl = calcResults.flapLeft;
+            const fr = calcResults.flapRight;
+            const sp = calcResults.spineWidth;
+            const bw = calcResults.bookWidth;
+            const bh = calcResults.bookHeight;
+
+            // Fundo Sangria (Tom Pêssego/Laranja do Gabarito)
+            doc.setFillColor(51, 33, 21); 
+            doc.rect(0, 0, totalW, totalH, "F");
+
+            // Área de Corte Real (Interior Escuro)
+            doc.setFillColor(15, 23, 42); 
+            doc.rect(b, b, totalW - b*2, totalH - b*2, "F");
+            doc.setDrawColor(239, 68, 68); // Linha vermelha de corte
+            doc.setLineWidth(0.4);
+            doc.rect(b, b, totalW - b*2, totalH - b*2, "D");
+
+            // MARGEM DE SEGURANÇA UNIFICADA (Contínua em azul-claro)
+            doc.setDrawColor(14, 165, 233); // Azul claro
+            doc.setLineWidth(s);
+            doc.rect(b + s/2, b + s/2, totalW - b*2 - s, totalH - b*2 - s, "D");
+
+            // Divisores e Dobras de Painéis
+            doc.setDrawColor(148, 163, 184); // Linha cinza dobra
+            doc.setLineWidth(0.3);
+            doc.setLineDashPattern([2, 2], 0);
+
+            let currX = b;
+
+            // Dobra Orelha Esquerda
+            if (fl > 0) {
+                doc.line(currX + fl, b, currX + fl, totalH - b);
+            }
+
+            // Primeira dobra da contracapa
+            let contracapaStartX = b + (fl > 0 ? fl : 0);
+            doc.line(contracapaStartX + bw, b, contracapaStartX + bw, totalH - b);
+
+            // Segunda dobra da lombada
+            let spineStartX = contracapaStartX + bw;
+            doc.line(spineStartX + sp, b, spineStartX + sp, totalH - b);
+
+            // Terceira dobra da capa
+            let capaStartX = spineStartX + sp;
+            if (fr > 0) {
+                doc.line(capaStartX + bw, b, capaStartX + bw, totalH - b);
+            }
+
+            doc.setLineDashPattern([], 0); // Reset dash
+
+            // Helper function to draw bracket on PDF with autoadaptive inset
+            function drawPdfBracket(x1, x2, y, labelText, pixelText) {
+                const bracketDepth = 4;
+                const stemLength = 3;
+                doc.setDrawColor(71, 85, 105);
+                doc.setLineWidth(0.3);
+                const inset = Math.min(4, (x2 - x1) * 0.15); // Recuo autoadaptativo para evitar cruzamento de linhas
+                
+                // Draw bracket
+                doc.line(x1 + inset, y, x1 + inset, y + bracketDepth);
+                doc.line(x1 + inset, y + bracketDepth, x2 - inset, y + bracketDepth);
+                doc.line(x2 - inset, y + bracketDepth, x2 - inset, y);
+                // Draw stem
+                const cx = (x1 + x2) / 2;
+                doc.line(cx, y + bracketDepth, cx, y + bracketDepth + stemLength);
+                // Draw labels (Standardized Font Sizes)
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(8.5);
+                doc.setTextColor(148, 163, 184);
+                doc.text(labelText, cx, y + bracketDepth + stemLength + 3, { align: "center" });
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(7.5);
+                doc.setTextColor(71, 85, 105);
+                doc.text(pixelText, cx, y + bracketDepth + stemLength + 6, { align: "center" });
+            }
+
+            // Label positions
+            let labelY = b + Math.min(30, bh * 0.2);
+            let ccBracketY = b + bh * 0.38;
+
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(11); // Título Principal Padronizado
+            doc.setTextColor(255, 255, 255);
+
+            // Render Labels & Brackets in PDF
+            let currentDrawX = b;
+
+            // Orelha Esquerda
+            if (fl > 0) {
+                doc.setTextColor(56, 189, 248);
+                doc.text("ORELHA", currentDrawX + fl / 2, labelY, { align: "center" });
+                drawPdfBracket(
+                    currentDrawX, 
+                    currentDrawX + fl, 
+                    ccBracketY, 
+                    `Largura: ${fl.toFixed(1).replace('.', ',')} mm + ${b.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round((fl + b) * calcResults.mmToPx)} px)`
+                );
+                currentDrawX += fl;
+            }
+
+            // Contracapa
+            doc.setTextColor(255, 255, 255);
+            doc.text("CONTRACAPA", currentDrawX + bw / 2, labelY, { align: "center" });
+            drawPdfBracket(
+                currentDrawX, 
+                currentDrawX + bw, 
+                ccBracketY, 
+                `Largura: ${bw.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(bw * calcResults.mmToPx)} px)`
+            );
+            currentDrawX += bw;
+
+            // Lombada Text
+            doc.saveGraphicsState();
+            doc.setTextColor(129, 140, 248);
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(11); // Título Principal Padronizado
+            doc.text("LOMBADA", currentDrawX + sp / 2, b + bh / 2, { angle: 270, align: "center" });
+            doc.restoreGraphicsState();
+
+            // Lombada cota
+            if (sp < 20) {
+                // Diagonal pointer
+                const spX = currentDrawX + sp/2;
+                const spY = b + bh * 0.75;
+                doc.setDrawColor(129, 140, 248);
+                doc.setLineWidth(0.3);
+                doc.line(spX, spY, spX + 6, spY + 6);
+                doc.line(spX + 6, spY + 6, spX + 15, spY + 6);
+                doc.setFont("Helvetica", "bold");
+                doc.setFontSize(8.5);
+                doc.setTextColor(165, 180, 252);
+                doc.text(`Largura: ${sp.toFixed(1).replace('.', ',')} mm`, spX + 16, spY + 5, { align: "left" });
+                doc.setFont("Helvetica", "normal");
+                doc.setFontSize(7.5);
+                doc.setTextColor(129, 140, 248);
+                doc.text(`(${Math.round(sp*calcResults.mmToPx)} px)`, spX + 16, spY + 8, { align: "left" });
+            } else {
+                drawPdfBracket(
+                    currentDrawX, 
+                    currentDrawX + sp, 
+                    ccBracketY, 
+                    `Lombada: ${sp.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round(sp * calcResults.mmToPx)} px)`
+                );
+            }
+            currentDrawX += sp;
+
+            // Capa
+            doc.setTextColor(255, 255, 255);
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(11); // Título Principal Padronizado
+            doc.text("CAPA PRINCIPAL", currentDrawX + bw / 2, labelY, { align: "center" });
+            drawPdfBracket(
+                currentDrawX, 
+                currentDrawX + bw, 
+                ccBracketY, 
+                `Largura: ${bw.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(bw * calcResults.mmToPx)} px)`
+            );
+            currentDrawX += bw;
+
+            // Orelha Direita
+            if (fr > 0) {
+                doc.setTextColor(56, 189, 248);
+                doc.text("ORELHA", currentDrawX + fr / 2, labelY, { align: "center" });
+                drawPdfBracket(
+                    currentDrawX, 
+                    currentDrawX + fr, 
+                    ccBracketY, 
+                    `Largura: ${fr.toFixed(1).replace('.', ',')} mm + ${b.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round((fr + b) * calcResults.mmToPx)} px)`
+                );
+            }
+
+            // 5. COTA GLOBAL SUPERIOR (Largura Total - Ajuste dinâmico anti-corte na borda do PDF)
+            const globalY = Math.max(5, b * 0.4); // Deslocamento seguro da margem absoluta
+            doc.setDrawColor(255, 255, 255);
+            doc.setLineWidth(0.4);
+            doc.line(0, globalY, totalW, globalY);
+
+            // Lines at ends
+            doc.line(0, globalY - 2, 0, globalY + 2);
+            doc.line(totalW, globalY - 2, totalW, globalY + 2);
+
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(11); // Título Principal Padronizado
+            doc.setTextColor(255, 255, 255);
+            const totalWText = `Largura Total: ${calcResults.totalWidthNoBleed.toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaWidth} px)`;
+            doc.text(totalWText, totalW / 2, globalY + 4, { align: "center" }); // Texto desenhado ABAIXO da cota para evitar corte
+
+            // 6. COTA GLOBAL LATERAL DIREITA (Altura Total - Deslocamento anti-corte lateral)
+            const globalX = totalW - Math.max(5, b * 0.4);
+            doc.line(globalX, 0, globalX, totalH);
+            doc.line(globalX - 2, 0, globalX + 2, 0);
+            doc.line(globalX - 2, totalH, globalX + 2, totalH);
+
+            const totalHText = `Altura Total: ${bh.toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)`;
+            
+            doc.saveGraphicsState();
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(11); // Título Principal Padronizado
+            doc.setTextColor(255, 255, 255);
+            // Desenha o texto rotacionado e recuado à esquerda da linha guia para não cortar na borda direita
+            doc.text(totalHText, globalX - 4, totalH / 2, { angle: 270, align: "center" });
+            doc.restoreGraphicsState();
+
+            // 7. PONTEIROS DE LEGENDA TÉCNICA (SANGRE E MARGEM DE SEGURANÇA UNIFICADA)
+            const ptrSangriaX = b / 2;
+            const ptrSangriaY = totalH - b * 0.5;
+            doc.setDrawColor(239, 68, 68);
+            doc.setLineWidth(0.3);
+            doc.line(40, totalH - 10, 40, totalH - 18);
+            doc.line(40, totalH - 18, ptrSangriaX, ptrSangriaY);
+            
+            doc.setFont("Helvetica", "bold");
+            doc.setFontSize(9); // Medida Padronizada
+            doc.setTextColor(249, 115, 22);
+            doc.text(`Sangria: ${b.toFixed(1).replace('.', ',')} mm`, 40, totalH - 6, { align: "center" });
+
+            const ptrSegX = b + s / 2;
+            const ptrSegY = totalH - b - s / 2;
+            doc.setDrawColor(56, 189, 248);
+            doc.line(totalW - 40, totalH - 10, totalW - 40, totalH - 18);
+            doc.line(totalW - 40, totalH - 18, ptrSegX, ptrSegY);
+
+            doc.setTextColor(56, 189, 248);
+            doc.text(`Margem de segurança: ${s.toFixed(1).replace('.', ',')} mm`, totalW - 40, totalH - 6, { align: "center" });
+
+            // Salvar
+            doc.save(`gabarito-tecnico-${activeProject.name.toLowerCase().replace(/\s+/g, '-')}.pdf`);
+            showToast("PDF Técnico exportado com sucesso!");
+        }
+
+        // 2. Exportar PNG Guia Transparente em Alta Resolução (Com Margem de Segurança Global e Cotas)
+        function exportHighResPNG() {
+            const canvas = document.createElement("canvas");
+            const w = calcResults.canvaWidth;
+            const h = calcResults.canvaHeight;
+            canvas.width = w;
+            canvas.height = h;
+
+            const ctx = canvas.getContext("2d");
+
+            // Fundo transparente
+            ctx.clearRect(0, 0, w, h);
+
+            const b = calcResults.bleed * calcResults.mmToPx;
+            const s = calcResults.safety * calcResults.mmToPx;
+            const fl = calcResults.flapLeft * calcResults.mmToPx;
+            const fr = calcResults.flapRight * calcResults.mmToPx;
+            const sp = calcResults.spineWidth * calcResults.mmToPx;
+            const bw = calcResults.bookWidth * calcResults.mmToPx;
+            const bh = calcResults.bookHeight * calcResults.mmToPx;
+
+            // Helper to draw brackets on Canvas PNG
+            function drawCanvasBracket(x1, x2, y, labelText, pixelWLabelText, strokeColor, fontColor) {
+                const bracketDepth = calcResults.mmToPx * 4; 
+                const stemLength = calcResults.mmToPx * 3;   
+                const lineWidth = Math.max(2, calcResults.mmToPx * 0.25);
+                const inset = Math.min(15, (x2 - x1) * 0.15); // Evita sobreposição em colunas finas
+                
+                ctx.strokeStyle = strokeColor;
+                ctx.lineWidth = lineWidth;
+                ctx.beginPath();
+                ctx.moveTo(x1 + inset, y);
+                ctx.lineTo(x1 + inset, y + bracketDepth);
+                ctx.lineTo(x2 - inset, y + bracketDepth);
+                ctx.lineTo(x2 - inset, y);
+                ctx.stroke();
+                
+                const cx = (x1 + x2) / 2;
+                ctx.beginPath();
+                ctx.moveTo(cx, y + bracketDepth);
+                ctx.lineTo(cx, y + bracketDepth + stemLength);
+                ctx.stroke();
+                
+                ctx.fillStyle = fontColor;
+                ctx.font = `bold ${Math.round(calcResults.mmToPx * 3.5)}px Arial`; // Tamanho Padronizado
+                ctx.textBaseline = "top";
+                ctx.fillText(labelText, cx, y + bracketDepth + stemLength + calcResults.mmToPx * 2);
+                
+                ctx.fillStyle = strokeColor;
+                ctx.font = `600 ${Math.round(calcResults.mmToPx * 3.0)}px Arial`; // Tamanho Padronizado
+                ctx.fillText(pixelWLabelText, cx, y + bracketDepth + stemLength + calcResults.mmToPx * 6);
+            }
+
+            // 1. ÁREA DE SANGRIA EXTERNA (Pêssego/Laranja)
+            ctx.fillStyle = "rgba(249, 115, 22, 0.3)"; 
+            ctx.fillRect(0, 0, w, h);
+
+            ctx.strokeStyle = "rgba(249, 115, 22, 0.9)";
+            ctx.lineWidth = Math.max(4, calcResults.mmToPx * 0.5);
+            ctx.strokeRect(0, 0, w, h);
+
+            ctx.clearRect(b, b, w - b*2, h - b*2);
+
+            // 2. MARGEM DE SEGURANÇA GLOBAL UNIFICADA (Azul semi-transparente contínua)
+            ctx.fillStyle = "rgba(14, 165, 233, 0.18)";
+            ctx.strokeStyle = "rgba(14, 165, 233, 0.6)";
+            ctx.lineWidth = s;
+            ctx.strokeRect(b + s/2, b + s/2, w - 2*b - s, h - 2*b - s);
+
+            // 3. LINHAS DE DOBRA VERTICAIS
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
+            ctx.lineWidth = Math.max(3, calcResults.mmToPx * 0.25);
+            ctx.setLineDash([15, 10]);
+
+            let currX = b;
+
+            if (fl > 0) {
+                ctx.beginPath();
+                ctx.moveTo(currX + fl, b);
+                ctx.lineTo(currX + fl, h - b);
+                ctx.stroke();
+                currX += fl;
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(currX + bw, b);
+            ctx.lineTo(currX + bw, h - b);
+            ctx.stroke();
+            currX += bw;
+
+            ctx.beginPath();
+            ctx.moveTo(currX + sp, b);
+            ctx.lineTo(currX + sp, h - b);
+            ctx.stroke();
+            currX += sp;
+
+            if (fr > 0) {
+                ctx.beginPath();
+                ctx.moveTo(currX + bw, b);
+                ctx.lineTo(currX + bw, h - b);
+                ctx.stroke();
+            }
+
+            ctx.setLineDash([]); 
+
+            // 4. TEXTOS DESCRITIVOS DOS BLOCOS & COTAS/MEDIDAS (Igual ao Preview!)
+            let labelY = b + Math.min(calcResults.mmToPx * 30, bh * 0.18);
+            let ccBracketY = b + bh * 0.38;
+
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            let currentDrawX = b;
+
+            if (fl > 0) {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+                ctx.fillText("ORELHA", currentDrawX + fl / 2, labelY);
+                drawCanvasBracket(
+                    currentDrawX, 
+                    currentDrawX + fl, 
+                    ccBracketY, 
+                    `Largura: ${calcResults.flapLeft.toFixed(1).replace('.', ',')} mm + ${calcResults.bleed.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round((calcResults.flapLeft + calcResults.bleed) * calcResults.mmToPx)} px)`,
+                    "#475569", 
+                    "#94a3b8"
+                );
+                currentDrawX += fl;
+            }
+
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.fillText("CONTRACAPA", currentDrawX + bw / 2, labelY);
+            drawCanvasBracket(
+                currentDrawX, 
+                currentDrawX + bw, 
+                ccBracketY, 
+                `Largura: ${calcResults.bookWidth.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(calcResults.bookWidth * calcResults.mmToPx)} px)`,
+                "#475569", 
+                "#94a3b8"
+            );
+            currentDrawX += bw;
+
+            // Lombada vertical
+            ctx.save();
+            ctx.translate(currentDrawX + sp / 2, b + bh / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillStyle = "#818cf8";
+            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.textAlign = "center";
+            ctx.fillText("LOMBADA", 0, 0);
+            ctx.restore();
+
+            // Lombada Bracket com indicador diagonal para lombadas finas
+            let spX = currentDrawX + sp / 2;
+            let spY = b + bh * 0.75;
+            if (sp < calcResults.mmToPx * 20) { 
+                const dOffset = calcResults.mmToPx * 6;
+                ctx.strokeStyle = "#818cf8";
+                ctx.lineWidth = Math.max(2, calcResults.mmToPx * 0.25);
+                ctx.beginPath();
+                ctx.moveTo(spX, spY);
+                ctx.lineTo(spX + dOffset, spY + dOffset);
+                ctx.lineTo(spX + dOffset * 2.5, spY + dOffset);
+                ctx.stroke();
+                
+                ctx.fillStyle = "#818cf8";
+                ctx.beginPath();
+                ctx.arc(spX, spY, Math.max(3, calcResults.mmToPx * 0.4), 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = "#a5b4fc";
+                ctx.font = `bold ${Math.round(calcResults.mmToPx * 3.5)}px Arial`; // Tamanho Padronizado
+                ctx.textAlign = "left";
+                ctx.textBaseline = "middle";
+                ctx.fillText(`Largura: ${calcResults.spineWidth.toFixed(1).replace('.', ',')} mm`, spX + dOffset * 2.7, spY + dOffset - calcResults.mmToPx * 1.5);
+                ctx.fillStyle = "#818cf8";
+                ctx.font = `600 ${Math.round(calcResults.mmToPx * 3.0)}px Arial`; // Tamanho Padronizado
+                ctx.fillText(`(${Math.round(calcResults.spineWidth * calcResults.mmToPx)} px)`, spX + dOffset * 2.7, spY + dOffset + calcResults.mmToPx * 1.5);
+            } else {
+                drawCanvasBracket(
+                    currentDrawX, 
+                    currentDrawX + sp, 
+                    ccBracketY, 
+                    `Lombada: ${calcResults.spineWidth.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round(calcResults.spineWidth * calcResults.mmToPx)} px)`,
+                    "#818cf8", 
+                    "#a5b4fc"
+                );
+            }
+            currentDrawX += sp;
+
+            // Capa
+            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.fillText("CAPA PRINCIPAL", currentDrawX + bw / 2, labelY);
+            drawCanvasBracket(
+                currentDrawX, 
+                currentDrawX + bw, 
+                ccBracketY, 
+                `Largura: ${calcResults.bookWidth.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(calcResults.bookWidth * calcResults.mmToPx)} px)`,
+                "#475569", 
+                "#94a3b8"
+            );
+            currentDrawX += bw;
+
+            // Orelha Direita
+            if (fr > 0) {
+                ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+                ctx.fillText("ORELHA", currentDrawX + fr / 2, labelY);
+                drawCanvasBracket(
+                    currentDrawX, 
+                    currentDrawX + fr, 
+                    ccBracketY, 
+                    `Largura: ${calcResults.flapRight.toFixed(1).replace('.', ',')} mm + ${calcResults.bleed.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round((calcResults.flapRight + calcResults.bleed) * calcResults.mmToPx)} px)`,
+                    "#475569", 
+                    "#94a3b8"
+                );
+            }
+
+            // 5. COTA GLOBAL SUPERIOR (Largura Total - Ajuste anti-corte em PNG)
+            const globalY = Math.max(calcResults.mmToPx * 5, b * 0.4); // Deslocamento seguro
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+            ctx.lineWidth = Math.max(3, calcResults.mmToPx * 0.3);
+            ctx.beginPath();
+            ctx.moveTo(0, globalY);
+            ctx.lineTo(w, globalY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0, globalY - calcResults.mmToPx * 2);
+            ctx.lineTo(0, globalY + calcResults.mmToPx * 2);
+            ctx.moveTo(w, globalY - calcResults.mmToPx * 2);
+            ctx.lineTo(w, globalY + calcResults.mmToPx * 2);
+            ctx.stroke();
+
+            ctx.fillStyle = "#ffffff";
+            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top"; // Renderiza abaixo da linha para não cortar
+            const totalWText = `Largura Total: ${calcResults.totalWidthNoBleed.toFixed(1).replace('.', ',')} mm + ${(calcResults.bleed * 2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaWidth} px)`;
+            ctx.fillText(totalWText, w / 2, globalY + calcResults.mmToPx * 2);
+
+            // 6. COTA GLOBAL LATERAL DIREITA (Altura Total - Ajuste anti-corte lateral em PNG)
+            const globalX = w - Math.max(calcResults.mmToPx * 5, b * 0.4);
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+            ctx.lineWidth = Math.max(3, calcResults.mmToPx * 0.3);
+            ctx.beginPath();
+            ctx.moveTo(globalX, 0);
+            ctx.lineTo(globalX, h);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(globalX - calcResults.mmToPx * 2, 0);
+            ctx.lineTo(globalX + calcResults.mmToPx * 2, 0);
+            ctx.moveTo(globalX - calcResults.mmToPx * 2, h);
+            ctx.lineTo(globalX + calcResults.mmToPx * 2, h);
+            ctx.stroke();
+
+            // Texto vertical da Altura Total recuado à esquerda
+            ctx.save();
+            ctx.translate(globalX - calcResults.mmToPx * 4, h / 2); // Recuo seguro
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillStyle = "#ffffff";
+            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.textAlign = "center";
+            ctx.textBaseline = "bottom";
+            const totalHText = `Altura Total: ${calcResults.bookHeight.toFixed(1).replace('.', ',')} mm + ${(calcResults.bleed * 2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)`;
+            ctx.fillText(totalHText, 0, 0);
+            ctx.restore();
+
+            // 7. PONTEIROS DE LEGENDA TÉCNICA (SANGRE E MARGEM DE SEGURANÇA UNIFICADA)
+            const ptrSangriaX = b / 2;
+            const ptrSangriaY = h - b * 0.5;
+            ctx.strokeStyle = "#ef4444";
+            ctx.lineWidth = Math.max(2, calcResults.mmToPx * 0.25);
+            ctx.beginPath();
+            ctx.moveTo(calcResults.mmToPx * 150, h - calcResults.mmToPx * 10);
+            ctx.lineTo(calcResults.mmToPx * 150, h - calcResults.mmToPx * 20);
+            ctx.lineTo(ptrSangriaX, ptrSangriaY);
+            ctx.stroke();
+
+            drawArrowhead(ctx, calcResults.mmToPx * 150, h - calcResults.mmToPx * 20, ptrSangriaX, ptrSangriaY, Math.max(12, calcResults.mmToPx * 2));
+
+            ctx.fillStyle = "#f97316";
+            ctx.font = `bold ${Math.round(calcResults.mmToPx * 3.6)}px Arial`; // Tamanho Padronizado
+            ctx.textBaseline = "top";
+            ctx.fillText(`Sangria: ${calcResults.bleed.toFixed(1).replace('.', ',')}mm`, calcResults.mmToPx * 150, h - calcResults.mmToPx * 8);
+
+            const ptrSegX = b + s / 2;
+            const ptrSegY = h - b - s / 2;
+            ctx.strokeStyle = "#38bdf8";
+            ctx.beginPath();
+            ctx.moveTo(w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 10);
+            ctx.lineTo(w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 20);
+            ctx.lineTo(ptrSegX, ptrSegY);
+            ctx.stroke();
+
+            drawArrowhead(ctx, w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 20, ptrSegX, ptrSegY, Math.max(12, calcResults.mmToPx * 2));
+
+            ctx.fillStyle = "#38bdf8";
+            ctx.fillText(`Margem de segurança: ${calcResults.safety.toFixed(1).replace('.', ',')}mm`, w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 8);
+
+            // Salvar e Baixar imagem automaticamente
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement("a");
+            link.download = `gabarito-uiclap-guia-${activeProject.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+            link.href = image;
+            link.click();
+
+            showToast("Gabarito PNG Guia unificado exportado com sucesso!");
+        }
+
+        // Helper to draw arrowhead in canvas
+        function drawArrowhead(ctx, fromx, fromy, tox, toy, r) {
+            var x_center = tox;
+            var y_center = toy;
+
+            var angle;
+            var x;
+            var y;
+
+            ctx.beginPath();
+
+            angle = Math.atan2(toy - fromy, tox - fromx)
+            x = r * Math.cos(angle) + x_center;
+            y = r * Math.sin(angle) + y_center;
+
+            ctx.moveTo(x, y);
+
+            angle += (1/3) * (2 * Math.PI)
+            x = r * Math.cos(angle) + x_center;
+            y = r * Math.sin(angle) + y_center;
+
+            ctx.lineTo(x, y);
+
+            angle += (1/3) * (2 * Math.PI)
+            x = r * Math.cos(angle) + x_center;
+            y = r * Math.sin(angle) + y_center;
+
+            ctx.lineTo(x, y);
+
+            ctx.closePath();
+            ctx.fillStyle = ctx.strokeStyle;
+            ctx.fill();
+        }
+
+        // GESTÃO DO HISTÓRICO DE PROJETOS (Local Storage)
+        function saveProject() {
+            updateStateFromInputs();
+            let history = [];
+            const localHist = localStorage.getItem("bcp_projects_history");
+            if (localHist) {
+                try { history = JSON.parse(localHist); } catch(e){}
+            }
+
+            history = history.filter(p => p.name !== activeProject.name);
+            history.unshift({ ...activeProject });
+
+            localStorage.setItem("bcp_projects_history", JSON.stringify(history));
+            renderHistoryList();
+            showToast("Projeto salvo no histórico local!");
+        }
+
+        function renderHistoryList() {
+            const container = document.getElementById("projects-list");
+            container.innerHTML = "";
+
+            let history = [];
+            const localHist = localStorage.getItem("bcp_projects_history");
+            if (localHist) {
+                try { history = JSON.parse(localHist); } catch(e){}
+            }
+
+            if (history.length === 0) {
+                container.innerHTML = `<p class="text-xs text-slate-500 italic">Nenhum projeto salvo localmente.</p>`;
+                return;
+            }
+
+            history.forEach((proj, idx) => {
+                const item = document.createElement("div");
+                item.className = "flex items-center justify-between p-2 hover:bg-slate-900 rounded-lg border border-slate-800 transition text-xs";
+                item.innerHTML = `
+                    <div onclick="loadProject('${proj.name}')" class="cursor-pointer flex-1 text-slate-200 hover:text-brand-400 font-medium truncate">
+                        <i class="fa-solid fa-file-invoice text-slate-500 mr-1"></i> ${proj.name}
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="duplicateProject('${proj.name}')" class="text-slate-400 hover:text-indigo-400" title="Duplicar"><i class="fa-solid fa-copy"></i></button>
+                        <button onclick="deleteProject('${proj.name}')" class="text-rose-500 hover:text-rose-400" title="Excluir"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Carregar do Histórico
+        function loadProject(name) {
+            const localHist = localStorage.getItem("bcp_projects_history");
+            if (localHist) {
+                try {
+                    const history = JSON.parse(localHist);
+                    const found = history.find(p => p.name === name);
+                    if (found) {
+                        activeProject = { ...found };
+                        syncInputsFromState();
+                        calculate();
+                        showToast(`Projeto "${name}" carregado!`);
+                    }
+                } catch(e){}
+            }
+        }
+
+        function duplicateProject(name) {
+            const localHist = localStorage.getItem("bcp_projects_history");
+            if (localHist) {
+                try {
+                    let history = JSON.parse(localHist);
+                    const found = history.find(p => p.name === name);
+                    if (found) {
+                        const dup = { ...found, name: found.name + " (Cópia)" };
+                        history.unshift(dup);
+                        localStorage.setItem("bcp_projects_history", JSON.stringify(history));
+                        renderHistoryList();
+                        showToast(`Cópia criada com sucesso!`);
+                    }
+                } catch(e){}
+            }
+        }
+
+        function deleteProject(name) {
+            if (confirm(`Excluir o projeto "${name}" do seu histórico local?`)) {
+                let history = [];
+                const localHist = localStorage.getItem("bcp_projects_history");
+                if (localHist) {
+                    try {
+                        history = JSON.parse(localHist);
+                        history = history.filter(p => p.name !== name);
+                        localStorage.setItem("bcp_projects_history", JSON.stringify(history));
+                        renderHistoryList();
+                        showToast("Projeto removido.");
+                    } catch(e){}
+                }
+            }
+        }
+
+        // SISTEMA DE TOAST NOTIFICATIONS
+        function showToast(message, type = "success") {
+            const toast = document.getElementById("toast");
+            const toastMsg = document.getElementById("toast-message");
+            
+            toastMsg.textContent = message;
+            
+            if (type === "error") {
+                toast.className = "fixed bottom-6 right-6 bg-rose-600 border border-rose-500 text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 transition-all transform translate-y-0 opacity-100";
+            } else if (type === "info") {
+                toast.className = "fixed bottom-6 right-6 bg-blue-600 border border-blue-500 text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 transition-all transform translate-y-0 opacity-100";
+            } else {
+                toast.className = "fixed bottom-6 right-6 bg-emerald-600 border border-emerald-500 text-white px-5 py-3 rounded-xl shadow-2xl z-50 flex items-center gap-3 transition-all transform translate-y-0 opacity-100";
+            }
+
+            toast.classList.remove("hidden");
+
+            setTimeout(() => {
+                toast.classList.add("opacity-0");
+                toast.classList.add("translate-y-10");
+                setTimeout(() => {
+                    toast.classList.add("hidden");
+                }, 300);
+            }, 3000);
+        }
+
+        // EVENTOS DE UNIDADE DE MEDIDA
+        function handleUnitChange() {
+            calculate();
+        }
+    </script>
+</body>
+</html>
