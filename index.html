@@ -37,14 +37,14 @@
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: #f1f1f1;
+            background: #0f172a;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
+            background: #334155;
             border-radius: 4px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8;
+            background: #475569;
         }
     </style>
 </head>
@@ -59,7 +59,7 @@
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
-                        Book Cover Pro <span class="text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full uppercase font-semibold">v2.0 Premium</span>
+                        Book Cover Pro <span class="text-xs bg-brand-600 text-white px-2 py-0.5 rounded-full uppercase font-semibold">v2.1 Premium</span>
                     </h1>
                     <p class="text-xs text-slate-400">Calculadora de Lombada e Gabaritos de Alta Fidelidade</p>
                 </div>
@@ -68,7 +68,7 @@
             <!-- Quick Presets com IDs para controle ativo dinâmico -->
             <div class="flex flex-wrap items-center gap-2">
                 <span class="text-xs text-slate-400 mr-1"><i class="fa-solid fa-wand-magic-sparkles"></i> Gráfica / Padrão:</span>
-                <button id="btn-preset-padrao" onclick="applyPreset('padrao')" class="px-3 py-1.5 text-xs bg-brand-600 text-white hover:bg-brand-700 rounded-lg border border-brand-500 transition font-semibold">Padrão de Mercado</button>
+                <button id="btn-preset-padrao" onclick="applyPreset('padrao')" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200">Padrão de Mercado</button>
                 <button id="btn-preset-uiclap" onclick="applyPreset('uiclap')" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200">UICLAP (600 DPI)</button>
                 <button id="btn-preset-kdp" onclick="applyPreset('kdp')" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200">Amazon KDP</button>
                 <button id="btn-preset-clube" onclick="applyPreset('clube')" class="px-3 py-1.5 text-xs bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 transition font-medium text-slate-200">Clube de Autores</button>
@@ -133,7 +133,7 @@
                         <!-- Tipo de Capa -->
                         <div>
                             <label class="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">Tipo de Capa</label>
-                            <select id="input-cover-type" onchange="calculate()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
+                            <select id="input-cover-type" onchange="handleCoverTypeChange()" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-sm text-slate-200 focus:outline-none focus:ring-2 focus:ring-brand-500">
                                 <option value="brochura-250" selected>Brochura 250g</option>
                                 <option value="brochura-300">Brochura 300g</option>
                                 <option value="supremo-250">Supremo 250g</option>
@@ -309,7 +309,74 @@
                 </div>
             </div>
 
-            <!-- FERRAMENTAS PREMIUM E INTEGRACÃO CANVA -->
+            <!-- PAINEL DE MEMÓRIA DE CÁLCULO CIENTÍFICO DA CAPA -->
+            <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <h3 class="font-bold text-white text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-square-root-variable text-brand-400"></i> Memória de Cálculo & Detalhamento Científico
+                    </h3>
+                    <span class="text-[10px] font-bold text-brand-300 bg-brand-500/10 px-2 py-0.5 rounded border border-brand-500/20 uppercase">Engenharia de Capa</span>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <!-- Coluna 1: Espessura de Folhas -->
+                    <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800/60 space-y-2">
+                        <span class="font-semibold text-slate-300 flex items-center gap-1.5 border-b border-slate-800/80 pb-1">
+                            <i class="fa-solid fa-layer-group text-slate-500 text-[10px]"></i> 1. Caliper (Espessura da Folha)
+                        </span>
+                        <div class="space-y-1 text-slate-400 leading-relaxed">
+                            <p>Fórmula Volumétrica:</p>
+                            <code class="block bg-slate-950 p-1.5 rounded text-emerald-400 font-mono text-[10px] text-center my-1 border border-slate-800">
+                                Espessura (mm) = (Gramatura &times; Bulk) &divide; 1000
+                            </code>
+                            <div class="grid grid-cols-2 gap-1 text-[11px] pt-1 border-t border-slate-800/40">
+                                <div>Papel Selecionado:</div>
+                                <div class="text-right text-slate-200 font-medium" id="math-paper-name">-</div>
+                                <div>Bulk Factor:</div>
+                                <div class="text-right text-slate-200 font-medium" id="math-bulk-factor">-</div>
+                                <div>Espessura Unitária:</div>
+                                <div class="text-right text-emerald-400 font-mono font-bold" id="math-caliper-result">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Coluna 2: Lombada e Capa Dura -->
+                    <div class="bg-slate-900/50 p-3 rounded-xl border border-slate-800/60 space-y-2">
+                        <span class="font-semibold text-slate-300 flex items-center gap-1.5 border-b border-slate-800/80 pb-1">
+                            <i class="fa-solid fa-book-bookmark text-slate-500 text-[10px]"></i> 2. Fórmula da Lombada
+                        </span>
+                        <div class="space-y-1 text-slate-400 leading-relaxed">
+                            <p>Fórmula Geral:</p>
+                            <code class="block bg-slate-950 p-1.5 rounded text-emerald-400 font-mono text-[10px] text-center my-1 border border-slate-800" id="math-spine-formula">
+                                Lombada = (Páginas &divide; 2) &times; Caliper + Capa
+                            </code>
+                            <div class="grid grid-cols-2 gap-1 text-[11px] pt-1 border-t border-slate-800/40" id="math-spine-calc-lines">
+                                <div>Total de Folhas:</div>
+                                <div class="text-right text-slate-200 font-medium" id="math-total-sheets">-</div>
+                                <div>Espessura Miolo:</div>
+                                <div class="text-right text-slate-200 font-medium" id="math-miolo-thickness">-</div>
+                                <div>Ajuste de Capa:</div>
+                                <div class="text-right text-slate-200 font-medium" id="math-cover-comp">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detalhes de Capa Dura (Aparece dinamicamente se ativado) -->
+                <div id="math-hardcover-box" class="hidden bg-brand-950/20 p-3 rounded-xl border border-brand-500/20 text-xs text-brand-200 space-y-2">
+                    <span class="font-bold text-brand-300 flex items-center gap-1.5"><i class="fa-solid fa-circle-info"></i> Ajustes Específicos para Capa Dura (Case Bound)</span>
+                    <p class="text-slate-300 leading-relaxed">
+                        A chapa de papelão rígido (Greyboard) requer medidas diferenciadas devido ao encabeçamento e dobras físicas:
+                    </p>
+                    <ul class="list-disc list-inside space-y-1 text-slate-400 pl-1">
+                        <li><strong class="text-slate-200">Projeção (Board Overhang):</strong> Adicionado <span class="text-brand-300 font-semibold font-mono">3,0 mm</span> nas bordas externas e <span class="text-brand-300 font-semibold font-mono">6,0 mm</span> na altura total para cobrir o miolo.</li>
+                        <li><strong class="text-slate-200">Vira (Turn-in):</strong> A sangria foi fixada em <span class="text-brand-300 font-semibold font-mono">15,0 mm</span> (em vez de 5,0 mm) para o papel ser envelopado ao redor das bordas internas do papelão.</li>
+                        <li><strong class="text-slate-200">Dobradiça / Joint (Rebaixo):</strong> Espaço reservado de <span class="text-brand-300 font-semibold font-mono">5,0 mm</span> em cada lado da lombada para facilitar a articulação da capa ao abrir o livro.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- FERRAMENTAS PREMIUM -->
             <div class="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-6">
                 <h3 class="font-bold text-white text-base flex items-center gap-2">
                     <i class="fa-solid fa-crown text-amber-500"></i> Exportação Premium e Guias de Design
@@ -323,7 +390,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-sm text-white">Salvar PDF Técnico</h4>
-                            <p class="text-[11px] text-slate-400 mt-1">Gabarito com cotas detalhadas, linhas de dobra, medidas e máscara completa.</p>
+                            <p class="text-[11px] text-slate-400 mt-1">Gabarito com cotas detalhadas, linhas de dobra, medidas e máscara completa de altíssima fidelidade.</p>
                         </div>
                     </button>
 
@@ -334,7 +401,7 @@
                         </div>
                         <div>
                             <h4 class="font-bold text-sm text-white">Exportar PNG Guia</h4>
-                            <p class="text-[11px] text-slate-400 mt-1">Fundo transparente com divisões em pêssego, azul de segurança e medidas para o Canva.</p>
+                            <p class="text-[11px] text-slate-400 mt-1">Fundo transparente de alta densidade com divisões pêssego, azul de segurança e réguas.</p>
                         </div>
                     </button>
                 </div>
@@ -342,12 +409,12 @@
                 <!-- GUIAS DE INTEGRAÇÃO (CANVA / PHOTOSHOP) -->
                 <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-3">
                     <h4 class="text-xs font-bold text-slate-200 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-info text-brand-400"></i> Como utilizar o Gabarito de Divisões no Canva:
+                        <i class="fa-solid fa-circle-info text-brand-400"></i> Como utilizar o Gabarito de Divisões no seu Software:
                     </h4>
                     <ol class="text-xs text-slate-400 space-y-2 list-decimal list-inside">
                         <li>Clique em <strong class="text-slate-200">Exportar PNG Guia</strong> para salvar a imagem guia com as medidas e transparência em alta resolução.</li>
-                        <li>No Canva, crie um design personalizado com as dimensões em pixels informadas no painel de resultados acima.</li>
-                        <li>Arraste o arquivo PNG salvo para dentro da sua página do Canva e estique-o até os cantos para cobrir 100% da folha.</li>
+                        <li>No Canva, Photoshop ou CorelDraw, crie um design personalizado com as dimensões em pixels informadas no painel de resultados acima.</li>
+                        <li>Arraste o arquivo PNG salvo para dentro da sua página de edição e estique-o até os cantos para cobrir 100% da folha de trabalho.</li>
                         <li>Sua área segura de design (Margem azul de segurança) está contínua ao redor de toda a capa (não dividida por painéis!), facilitando o alinhamento geral.</li>
                         <li>Após montar sua arte, oculte ou apague a camada da imagem guia antes de exportar o PDF para impressão.</li>
                     </ol>
@@ -412,7 +479,8 @@
 
     <!-- LOGIC SYSTEM IN JAVASCRIPT -->
     <script>
-        // CONFIGURAÇÕES E BANCO DE DADOS PADRÃO (In-Memory persistido com localStorage se preferido)
+        // CONFIGURAÇÕES E BANCO DE DADOS PADRÃO (Com Fatores de Bulk para Cálculo de Alta Precisão)
+        // O Volume (Bulk) é a proporção de ar contido nas fibras: High Bulk > 1.3 / Low Bulk < 1.0 (Comprimido)
         let paperDatabase = {
             "Offset": {
                 "75g": 0.094,
@@ -443,6 +511,17 @@
             "Papel Jornal": {
                 "52g": 0.085
             }
+        };
+
+        // Fatores de Bulk de Referência da Indústria para Auditoria Científica (Bulk = Espessura * 1000 / Gramatura)
+        const bulkReferenceFactors = {
+            "Offset": 1.15,
+            "Pólen Soft": 1.45,
+            "Couché Fosco": 0.85,
+            "Couché Brilho": 0.81,
+            "Reciclato": 1.35,
+            "Papel Bíblico": 1.25,
+            "Papel Jornal": 1.63
         };
 
         // Presets de Gráficas
@@ -621,6 +700,28 @@
             if (shouldRecalculate) calculate();
         }
 
+        // Força sangria de vira e remove orelhas caso escolha capa dura
+        function handleCoverTypeChange() {
+            const coverType = document.getElementById("input-cover-type").value;
+            const hasFlapsSelect = document.getElementById("input-has-flaps");
+            const bleedInput = document.getElementById("input-bleed");
+            const safetyInput = document.getElementById("input-safety");
+
+            if (coverType === "dura") {
+                // Capa dura case wrapping exige sangria mínima de 15mm ("Vira") para dobras sobre o papelão
+                bleedInput.value = "15";
+                safetyInput.value = "12"; // Maior área segura para compensar os rebaixos das canaletas
+                hasFlapsSelect.value = "no"; // Capa dura clássica impressa não possui orelhas diretas no papelão
+                handleFlapsChange(false);
+                showToast("Configurações ajustadas para Engenharia de Capa Dura (Vira de 15mm e Segurança Ampliada).", "info");
+            } else {
+                // Volta ao padrão
+                bleedInput.value = "5";
+                safetyInput.value = "10";
+            }
+            calculate();
+        }
+
         // MOTOR DE CÁLCULO CENTRAL (Baseado em Pesquisa Técnica e Padrão de Mercado)
         let calcResults = {};
 
@@ -645,6 +746,10 @@
                     break;
             }
 
+            // Ajuste geométrico de projeção da capa dura (Greyboard Overhang)
+            let isCapaDura = activeProject.coverType === "dura";
+            let boardOverhang = isCapaDura ? 3.0 : 0.0; // Papelão rígido estende 3mm para fora das páginas
+
             // 2. Cálculo da Lombada (Fórmula: Lombada = Folhas * Micragem)
             let micragem = 0.108; // default para Offset 90g
             if (paperDatabase[activeProject.paperType] && paperDatabase[activeProject.paperType][activeProject.paperWeight]) {
@@ -658,17 +763,18 @@
             let coverThicknessComp = 0;
             if (activeProject.coverType === "brochura-300" || activeProject.coverType === "supremo-300") {
                 coverThicknessComp = 0.4;
-            } else if (activeProject.coverType === "dura") {
-                coverThicknessComp = 1.5; // Espessura compensada para papelão rígido (Hinges/Rebaixo de Capa Dura)
+            } else if (isCapaDura) {
+                // Em capa dura, a lombada da chapa precisa englobar a espessura das duas capas e dobras do papel
+                coverThicknessComp = 1.5; 
             }
             
             // Sincronização de arredondamento técnico de 1 decimal
             spineWidth = parseFloat((spineWidth + coverThicknessComp).toFixed(1));
 
-            // 3. Orelhas
+            // 3. Orelhas (Não permitidas em capa dura case wrap clássica devido a rigidez do papelão)
             let flapLeft = 0;
             let flapRight = 0;
-            if (activeProject.hasFlaps === "yes") {
+            if (activeProject.hasFlaps === "yes" && !isCapaDura) {
                 if (activeProject.flapsSize === "custom") {
                     flapLeft = activeProject.customFlapLeft;
                     flapRight = activeProject.customFlapRight;
@@ -679,9 +785,20 @@
                 }
             }
 
-            // 4. Medidas Finais do Gabarito Aberto
-            let totalW = flapLeft + bookW + spineWidth + bookW + flapRight;
-            let totalH = bookH;
+            // 4. Medidas Finais do Gabarito Aberto Sem Sangria
+            // Para Capa Dura, adiciona 3mm de projeção na largura de cada capa e inclui canal/hinge (5mm de cada lado da lombada)
+            let totalW = 0;
+            let totalH = 0;
+
+            if (isCapaDura) {
+                // Vira interna (atua como sangria extrema) será de 15mm (conforme configurado na técnica)
+                // Largura Aberta sem Vira: (Capa + 3mm) + Canal (5mm) + Lombada + Canal (5mm) + (Contracapa + 3mm)
+                totalW = (bookW + boardOverhang) + 5.0 + spineWidth + 5.0 + (bookW + boardOverhang);
+                totalH = bookH + (boardOverhang * 2); // 3mm no topo + 3mm na base
+            } else {
+                totalW = flapLeft + bookW + spineWidth + bookW + flapRight;
+                totalH = bookH;
+            }
 
             // Adição de Sangria
             let bleed = activeProject.bleed;
@@ -710,16 +827,46 @@
                 canvaWidth: canvaW,
                 canvaHeight: canvaH,
                 dpi: dpi,
-                mmToPx: mmToPx
+                mmToPx: mmToPx,
+                isHardcover: isCapaDura,
+                overhang: boardOverhang
             };
 
             // Atualiza o estado visual das marcas de presets para manter sincronizado
             checkPresetMatch();
 
-            // Atualizar UI
+            // Atualizar UI e Painel Científico
             renderResults();
+            renderScientificPanel(micragem);
             renderSVG();
             update3DModel();
+        }
+
+        // ATUALIZA PAINEL DE MEMÓRIA DE CÁLCULO CIENTÍFICO DA CAPA
+        function renderScientificPanel(caliper) {
+            document.getElementById("math-paper-name").textContent = activeProject.paperType;
+            
+            const bulk = bulkReferenceFactors[activeProject.paperType] || 1.0;
+            document.getElementById("math-bulk-factor").textContent = `${bulk.toFixed(2)} cm³/g`;
+            document.getElementById("math-caliper-result").textContent = `${caliper.toFixed(4)} mm`;
+            
+            document.getElementById("math-total-sheets").textContent = `${activeProject.pages / 2} folhas`;
+            document.getElementById("math-miolo-thickness").textContent = `${((activeProject.pages / 2) * caliper).toFixed(2)} mm`;
+            
+            let compText = "0,0 mm (Padrão)";
+            if (activeProject.coverType === "brochura-300" || activeProject.coverType === "supremo-300") compText = "+0,4 mm (Capa Grossa)";
+            else if (activeProject.coverType === "dura") compText = "+1,5 mm (Compensação Capa Dura)";
+            document.getElementById("math-cover-comp").textContent = compText;
+
+            // Mostrar caixa explicativa de capa dura se ativado
+            const hardcoverBox = document.getElementById("math-hardcover-box");
+            if (calcResults.isHardcover) {
+                hardcoverBox.classList.remove("hidden");
+                document.getElementById("math-spine-formula").textContent = "Lombada (Dura) = Miolo + Papelão & Dobras (+1,5mm)";
+            } else {
+                hardcoverBox.classList.add("hidden");
+                document.getElementById("math-spine-formula").textContent = "Lombada = (Páginas ÷ 2) × Caliper + Capa";
+            }
         }
 
         // DETECTA SE AS CONFIGURAÇÕES ATUAIS CONFEREM COM ALGUM PRESET E AJUSTA O DESTAQUE DO BOTÃO CORRESPONDENTE
@@ -755,10 +902,8 @@
                 if (!btn) return;
                 
                 if (key === activeKey) {
-                    // Estado Ativo - Fica em Roxo (Brand) destacado
                     btn.className = "px-3 py-1.5 text-xs bg-brand-600 text-white hover:bg-brand-700 rounded-lg border border-brand-500 transition font-semibold shadow-md shadow-brand-500/10";
                 } else {
-                    // Estado Inativo - Retorna ao outline escuro
                     if (key === 'custom') {
                         btn.className = "px-3 py-1.5 text-xs bg-brand-600/20 hover:bg-brand-600/30 text-brand-400 rounded-lg border border-brand-500/30 transition font-medium";
                     } else {
@@ -824,6 +969,8 @@
             const bh = calcResults.bookHeight;
             const finalW = calcResults.finalWidthWithBleed;
             const finalH = calcResults.finalHeightWithBleed;
+            const isHard = calcResults.isHardcover;
+            const over = calcResults.overhang;
 
             // Escala e centralização dinâmica do gabarito dentro do SVG
             const scale = 860 / finalW;
@@ -851,10 +998,10 @@
             // GRUPO DE DESENHO PRINCIPAL DO LIVRO
             svgHtml += `<g transform="translate(${x_off}, ${y_off})">`;
 
-            // 1. SANGRIAS EXTERNAS (Borda Laranja de Sangria - Espaço Físico Adicional de 5mm)
+            // 1. SANGRIAS EXTERNAS / VIRA (Borda Laranja de Sangria)
             svgHtml += `<rect x="0" y="0" width="${drawW}" height="${drawH}" fill="#332115" stroke="#f97316" stroke-width="2.5" />`;
             
-            // 2. LINHA DE CORTE REAL (Área Interna Sem Sangria - Retângulo com a Linha Vermelha de Corte)
+            // 2. LINHA DE CORTE REAL (Área Interna Sem Sangria)
             svgHtml += `<rect x="${scaleBleed}" y="${scaleBleed}" width="${drawW - (scaleBleed*2)}" height="${drawH - (scaleBleed*2)}" fill="#0f172a" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4,4" />`;
 
             // 3. MARGEM DE SEGURANÇA UNIFICADA E CONTÍNUA
@@ -864,30 +1011,27 @@
             const safetyH = drawH - (scaleBleed*2) - scaleSafety;
             svgHtml += `<rect x="${safetyX}" y="${safetyY}" width="${safetyW}" height="${safetyH}" fill="none" stroke="#0ea5e9" stroke-width="${scaleSafety}" stroke-opacity="0.2" />`;
 
-            // 4. DIVISORES DE PAINÉIS (Vertical Folds) E MARCAÇÕES DE TAMANHO DOS PAINÉIS INDIVIDUAIS
+            // 4. DIVISORES DE PAINÉIS (Vertical Folds) E MARCAÇÕES DE TAMANHO
             let currX = scaleBleed;
-
-            // Determinar Y dinâmico para evitar colisões
             let labelY = scaleBleed + (bh * scale) * 0.18;
             let ccBracketY = scaleBleed + (bh * scale) * 0.38;
 
             // Função auxiliar para renderizar cotas e braçadeiras ("brackets")
-            function getCotaHtml(x1, x2, y, labelText, strokeColor = "#475569", fontColor = "#94a3b8") {
+            function getCotaHtml(x1, x2, y, labelText) {
                 const labelW = x2 - x1;
                 const bracketDepth = 15;
                 const stemLength = 12;
                 const inset = Math.min(15, labelW * 0.15); // Braçadeira autoadaptativa anti-colisão
                 return `
-                    <path d="M ${x1 + inset} ${y} L ${x1 + inset} ${y + bracketDepth} L ${x2 - inset} ${y + bracketDepth} L ${x2 - inset} ${y}" fill="none" stroke="${strokeColor}" stroke-width="1.2" />
-                    <line x1="${(x1+x2)/2}" y1="${y + bracketDepth}" x2="${(x1+x2)/2}" y2="${y + bracketDepth + stemLength}" stroke="${strokeColor}" stroke-width="1.2" />
-                    <!-- Medidas Padronizadas -->
-                    <text x="${(x1+x2)/2}" y="${y + bracketDepth + stemLength + 12}" fill="${fontColor}" font-size="10" font-weight="bold" text-anchor="middle">${labelText}</text>
-                    <text x="${(x1+x2)/2}" y="${y + bracketDepth + stemLength + 24}" fill="${strokeColor}" font-size="8.5" font-weight="600" text-anchor="middle">(${Math.round((labelW / scale) * calcResults.mmToPx)} px)</text>
+                    <path d="M ${x1 + inset} ${y} L ${x1 + inset} ${y + bracketDepth} L ${x2 - inset} ${y + bracketDepth} L ${x2 - inset} ${y}" fill="none" stroke="#475569" stroke-width="1.2" />
+                    <line x1="${(x1+x2)/2}" y1="${y + bracketDepth}" x2="${(x1+x2)/2}" y2="${y + bracketDepth + stemLength}" stroke="#475569" stroke-width="1.2" />
+                    <text x="${(x1+x2)/2}" y="${y + bracketDepth + stemLength + 12}" fill="#94a3b8" font-size="10" font-weight="bold" text-anchor="middle">${labelText}</text>
+                    <text x="${(x1+x2)/2}" y="${y + bracketDepth + stemLength + 24}" fill="#475569" font-size="8.5" font-weight="600" text-anchor="middle">(${Math.round((labelW / scale) * calcResults.mmToPx)} px)</text>
                 `;
             }
 
-            // Orelha Esquerda
-            if (fl > 0) {
+            // Orelha Esquerda (Inexistente em capa dura clássica)
+            if (fl > 0 && !isHard) {
                 let s_fl = fl * scale;
                 svgHtml += `<line x1="${currX + s_fl}" y1="${scaleBleed}" x2="${currX + s_fl}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
                 svgHtml += `<text x="${currX + s_fl/2}" y="${labelY}" fill="#38bdf8" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">ORELHA</text>`;
@@ -895,24 +1039,38 @@
                 currX += s_fl;
             }
 
-            // Contracapa
-            let s_bw = bw * scale;
-            svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
-            svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CONTRACAPA</text>`;
-            svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Largura: ${bw.toFixed(1).replace('.', ',')} mm`);
-            currX += s_bw;
+            // Contracapa / Capa Traseira (Papelão com overhang de +3mm se for capa dura)
+            let actualCapW = isHard ? (bw + over) : bw;
+            let s_bw = actualCapW * scale;
+
+            if (isHard) {
+                // Desenhar área reservada do rebaixo / dobradiça canaleta (5mm)
+                let channelW = 5.0 * scale;
+                svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#818cf8" stroke-width="1.2" stroke-dasharray="2,2" />`;
+                svgHtml += `<rect x="${currX + s_bw}" y="${scaleBleed}" width="${channelW}" height="${bh * scale + (over * 2) * scale}" fill="#0f172a" fill-opacity="0.6" stroke="none" />`;
+                
+                svgHtml += `<line x1="${currX + s_bw + channelW}" y1="${scaleBleed}" x2="${currX + s_bw + channelW}" y2="${drawH - scaleBleed}" stroke="#818cf8" stroke-width="1.2" />`;
+                svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CONTRACAPA</text>`;
+                svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Papelão: ${actualCapW.toFixed(1).replace('.', ',')} mm`);
+                
+                currX += s_bw + channelW;
+            } else {
+                svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
+                svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CONTRACAPA</text>`;
+                svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Largura: ${bw.toFixed(1).replace('.', ',')} mm`);
+                currX += s_bw;
+            }
 
             // Lombada
             let s_sp = sp * scale;
-            svgHtml += `<rect x="${currX}" y="${scaleBleed}" width="${s_sp}" height="${bh * scale}" fill="#1e1b4b" fill-opacity="0.3" stroke="#818cf8" stroke-width="1" />`;
+            svgHtml += `<rect x="${currX}" y="${scaleBleed}" width="${s_sp}" height="${(bh + over * 2) * scale}" fill="#1e1b4b" fill-opacity="0.3" stroke="#818cf8" stroke-width="1" />`;
             svgHtml += `<line x1="${currX + s_sp}" y1="${scaleBleed}" x2="${currX + s_sp}" y2="${drawH - scaleBleed}" stroke="#818cf8" stroke-width="1.2" />`;
             
-            // Texto vertical para lombada
-            svgHtml += `<g transform="translate(${currX + s_sp/2}, ${scaleBleed + (bh*scale)/2}) rotate(-90)">`;
+            svgHtml += `<g transform="translate(${currX + s_sp/2}, ${scaleBleed + ((bh + over * 2)*scale)/2}) rotate(-90)">`;
             svgHtml += `<text x="0" y="4" fill="#818cf8" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="2">LOMBADA</text>`;
             svgHtml += `</g>`;
 
-            // Ponteiro indicador com linha de chamada diagonal inteligente (Evita colisões se for lombada estreita)
+            // Ponteiro lombada
             let spX = currX + s_sp/2;
             let spY = scaleBleed + (bh * scale) * 0.75;
             if (s_sp < 75) {
@@ -921,45 +1079,58 @@
                 svgHtml += `<text x="${spX + 70}" y="${spY + 21}" fill="#a5b4fc" font-size="10" font-weight="bold" text-anchor="start">Largura: ${sp.toFixed(1).replace('.', ',')} mm</text>`;
                 svgHtml += `<text x="${spX + 70}" y="${spY + 31}" fill="#818cf8" font-size="8.5" font-weight="600" text-anchor="start">(${Math.round(sp*calcResults.mmToPx)} px)</text>`;
             } else {
-                svgHtml += getCotaHtml(currX, currX + s_sp, ccBracketY, `Lombada: ${sp.toFixed(1).replace('.', ',')} mm`, "#818cf8", "#a5b4fc");
+                svgHtml += getCotaHtml(currX, currX + s_sp, ccBracketY, `Lombada: ${sp.toFixed(1).replace('.', ',')} mm`, "#818cf8");
             }
 
             currX += s_sp;
 
-            // Capa (Frente)
-            svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
-            svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CAPA PRINCIPAL</text>`;
-            svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Largura: ${bw.toFixed(1).replace('.', ',')} mm`);
-            currX += s_bw;
+            // Capa (Frente) - Papelão com overhang se for capa dura
+            if (isHard) {
+                let channelW = 5.0 * scale;
+                svgHtml += `<line x1="${currX + channelW}" y1="${scaleBleed}" x2="${currX + channelW}" y2="${drawH - scaleBleed}" stroke="#818cf8" stroke-width="1.2" />`;
+                svgHtml += `<rect x="${currX}" y="${scaleBleed}" width="${channelW}" height="${bh * scale + (over * 2) * scale}" fill="#0f172a" fill-opacity="0.6" stroke="none" />`;
+                
+                currX += channelW;
 
-            // Orelha Direita
-            if (fr > 0) {
+                svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
+                svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CAPA PRINCIPAL</text>`;
+                svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Papelão: ${actualCapW.toFixed(1).replace('.', ',')} mm`);
+                currX += s_bw;
+            } else {
+                svgHtml += `<line x1="${currX + s_bw}" y1="${scaleBleed}" x2="${currX + s_bw}" y2="${drawH - scaleBleed}" stroke="#475569" stroke-width="1.2" />`;
+                svgHtml += `<text x="${currX + s_bw/2}" y="${labelY}" fill="#cbd5e1" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">CAPA PRINCIPAL</text>`;
+                svgHtml += getCotaHtml(currX, currX + s_bw, ccBracketY, `Largura: ${bw.toFixed(1).replace('.', ',')} mm`);
+                currX += s_bw;
+            }
+
+            // Orelha Direita (Apenas Brochura)
+            if (fr > 0 && !isHard) {
                 let s_fr = fr * scale;
                 svgHtml += `<text x="${currX + s_fr/2}" y="${labelY}" fill="#38bdf8" font-size="13" font-weight="extrabold" text-anchor="middle" letter-spacing="1">ORELHA</text>`;
                 svgHtml += getCotaHtml(currX, currX + s_fr, ccBracketY, `Largura: ${fr.toFixed(1).replace('.', ',')} mm + ${b.toFixed(1).replace('.', ',')} mm`);
             }
 
-            // COTA GLOBAL SUPERIOR (Largura Total - Ajuste dinâmico anti-corte de respiro)
+            // COTA GLOBAL SUPERIOR (Largura Total)
             svgHtml += `<line x1="0" y1="-30" x2="${drawW}" y2="-30" stroke="#ffffff" stroke-width="1.5" />`;
             svgHtml += `<line x1="0" y1="-35" x2="0" y2="-25" stroke="#ffffff" stroke-width="1.5" />`;
             svgHtml += `<line x1="${drawW}" y1="-35" x2="${drawW}" y2="-25" stroke="#ffffff" stroke-width="1.5" />`;
             svgHtml += `<text x="${drawW/2}" y="-40" fill="#ffffff" font-size="13" font-weight="extrabold" text-anchor="middle">Largura Total: ${calcResults.totalWidthNoBleed.toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaWidth} px)</text>`;
 
-            // COTA GLOBAL LATERAL DIREITA (Altura Total - Deslocamento otimizado anti-corte lateral)
+            // COTA GLOBAL LATERAL DIREITA (Altura Total)
             let cotaYStart = 0;
             let cotaYEnd = drawH;
             svgHtml += `<g transform="translate(${drawW + 25}, 0)">`;
             svgHtml += `<line x1="0" y1="${cotaYStart}" x2="0" y2="${cotaYEnd}" stroke="#ffffff" stroke-width="1.5" />`;
             svgHtml += `<line x1="-5" y1="${cotaYStart}" x2="5" y2="${cotaYStart}" stroke="#ffffff" stroke-width="1.5" />`;
             svgHtml += `<line x1="-5" y1="${cotaYEnd}" x2="5" y2="${cotaYEnd}" stroke="#ffffff" stroke-width="1.5" />`;
-            svgHtml += `<text x="12" y="${drawH/2}" fill="#ffffff" font-size="13" font-weight="extrabold" transform="rotate(90, 12, ${drawH/2})">Altura Total: ${bh.toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)</text>`;
+            svgHtml += `<text x="12" y="${drawH/2}" fill="#ffffff" font-size="13" font-weight="extrabold" transform="rotate(90, 12, ${drawH/2})">Altura Total: ${(bh + over * 2).toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)</text>`;
             svgHtml += `</g>`;
 
             // PONTEIROS DE LEGENDA TÉCNICA (SANGRE E MARGEM DE SEGURANÇA UNIFICADA)
             let ptrSangriaX = scaleBleed / 2;
             let ptrSangriaY = drawH - 2;
             svgHtml += `<path d="M 220, ${drawH + 45} L 220, ${drawH + 18} L ${ptrSangriaX}, ${ptrSangriaY}" fill="none" stroke="#ef4444" stroke-width="1.2" marker-end="url(#arrow)" />`;
-            svgHtml += `<text x="220" y="${drawH + 58}" fill="#f97316" font-size="10.5" font-weight="bold" text-anchor="middle">Sangria: ${b.toFixed(1)}mm</text>`;
+            svgHtml += `<text x="220" y="${drawH + 58}" fill="#f97316" font-size="10.5" font-weight="bold" text-anchor="middle">Sangria / Vira: ${b.toFixed(1)}mm</text>`;
 
             let ptrSegX = scaleBleed + scaleSafety / 2;
             let ptrSegY = drawH - scaleBleed - scaleSafety / 2;
@@ -968,32 +1139,6 @@
 
             svgHtml += `</g></svg>`;
             container.innerHTML = svgHtml;
-        }
-
-        // TABS SWITCHER
-        function switchTab(tab) {
-            currentTab = tab;
-            const btn2d = document.getElementById("tab-btn-2d");
-            const btn3d = document.getElementById("tab-btn-3d");
-            const view2d = document.getElementById("view-2d");
-            const view3d = document.getElementById("view-3d");
-
-            if (tab === "2d") {
-                btn2d.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white transition flex items-center gap-2";
-                btn3d.className = "px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-2";
-                view2d.classList.remove("hidden");
-                view3d.classList.add("hidden");
-            } else {
-                btn3d.className = "px-4 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white transition flex items-center gap-2";
-                btn2d.className = "px-4 py-2 text-sm font-semibold rounded-lg text-slate-400 hover:text-white transition flex items-center gap-2";
-                view3d.classList.remove("hidden");
-                view2d.classList.add("hidden");
-                
-                if (renderer) {
-                    const wrapper = document.getElementById("canvas-3d-wrapper");
-                    renderer.setSize(wrapper.clientWidth, wrapper.clientHeight);
-                }
-            }
         }
 
         // SIMULADOR 3D COM THREE.JS
@@ -1096,8 +1241,11 @@
             if (bookMesh) scene.remove(bookMesh);
 
             const scaleFactor = 0.01; 
-            const w = calcResults.bookWidth * scaleFactor;
-            const h = calcResults.bookHeight * scaleFactor;
+            const isHard = calcResults.isHardcover;
+            const over = calcResults.overhang;
+
+            const w = (calcResults.bookWidth + over) * scaleFactor;
+            const h = (calcResults.bookHeight + over * 2) * scaleFactor;
             const d = Math.max(calcResults.spineWidth * scaleFactor, 0.05);
 
             const geometry = new THREE.BoxGeometry(w, h, d);
@@ -1118,10 +1266,10 @@
             // Guias e Textos simulação
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 44px Arial";
-            ctx.fillText("LIVRO 3D ATIVO", 650, 480);
+            ctx.fillText(isHard ? "CAPA DURA 3D" : "LIVRO 3D ATIVO", 650, 480);
             ctx.font = "26px Arial";
             ctx.fillStyle = "#93c5fd";
-            ctx.fillText("Simulação de Capa", 650, 530);
+            ctx.fillText(isHard ? "Case Bound Pro" : "Simulação de Capa", 650, 530);
 
             ctx.fillStyle = "#ffffff";
             ctx.fillText("CONTRACAPA", 100, 480);
@@ -1136,7 +1284,7 @@
 
             const texture = new THREE.CanvasTexture(canvasTex);
 
-            const coverMaterial = new THREE.MeshPhongMaterial({ map: texture, shininess: 85 });
+            const coverMaterial = new THREE.MeshPhongMaterial({ map: texture, shininess: isHard ? 95 : 75 });
             const pageMaterial = new THREE.MeshPhongMaterial({ color: 0xfefefe, roughness: 1.0 });
 
             const materials = [
@@ -1256,6 +1404,8 @@
             const sp = calcResults.spineWidth;
             const bw = calcResults.bookWidth;
             const bh = calcResults.bookHeight;
+            const isHard = calcResults.isHardcover;
+            const over = calcResults.overhang;
 
             // Fundo Sangria (Tom Pêssego/Laranja do Gabarito)
             doc.setFillColor(51, 33, 21); 
@@ -1280,23 +1430,36 @@
 
             let currX = b;
 
-            // Dobra Orelha Esquerda
-            if (fl > 0) {
+            // Dobra Orelha Esquerda (Apenas Brochura)
+            if (fl > 0 && !isHard) {
                 doc.line(currX + fl, b, currX + fl, totalH - b);
             }
 
             // Primeira dobra da contracapa
-            let contracapaStartX = b + (fl > 0 ? fl : 0);
-            doc.line(contracapaStartX + bw, b, contracapaStartX + bw, totalH - b);
+            let contracapaStartX = b + ((fl > 0 && !isHard) ? fl : 0);
+            let actualCapW = isHard ? (bw + over) : bw;
+
+            if (isHard) {
+                // Desenha canal de 5mm na contracapa
+                doc.line(contracapaStartX + actualCapW, b, contracapaStartX + actualCapW, totalH - b);
+                doc.line(contracapaStartX + actualCapW + 5.0, b, contracapaStartX + actualCapW + 5.0, totalH - b);
+            } else {
+                doc.line(contracapaStartX + bw, b, contracapaStartX + bw, totalH - b);
+            }
 
             // Segunda dobra da lombada
-            let spineStartX = contracapaStartX + bw;
+            let spineStartX = contracapaStartX + actualCapW + (isHard ? 5.0 : 0);
             doc.line(spineStartX + sp, b, spineStartX + sp, totalH - b);
 
             // Terceira dobra da capa
             let capaStartX = spineStartX + sp;
-            if (fr > 0) {
-                doc.line(capaStartX + bw, b, capaStartX + bw, totalH - b);
+            if (isHard) {
+                doc.line(capaStartX + 5.0, b, capaStartX + 5.0, totalH - b);
+                doc.line(capaStartX + 5.0 + actualCapW, b, capaStartX + 5.0 + actualCapW, totalH - b);
+            } else {
+                if (fr > 0) {
+                    doc.line(capaStartX + bw, b, capaStartX + bw, totalH - b);
+                }
             }
 
             doc.setLineDashPattern([], 0); // Reset dash
@@ -1339,7 +1502,7 @@
             let currentDrawX = b;
 
             // Orelha Esquerda
-            if (fl > 0) {
+            if (fl > 0 && !isHard) {
                 doc.setTextColor(56, 189, 248);
                 doc.text("ORELHA", currentDrawX + fl / 2, labelY, { align: "center" });
                 drawPdfBracket(
@@ -1354,15 +1517,15 @@
 
             // Contracapa
             doc.setTextColor(255, 255, 255);
-            doc.text("CONTRACAPA", currentDrawX + bw / 2, labelY, { align: "center" });
+            doc.text("CONTRACAPA", currentDrawX + actualCapW / 2, labelY, { align: "center" });
             drawPdfBracket(
                 currentDrawX, 
-                currentDrawX + bw, 
+                currentDrawX + actualCapW, 
                 ccBracketY, 
-                `Largura: ${bw.toFixed(1).replace('.', ',')} mm`, 
-                `(${Math.round(bw * calcResults.mmToPx)} px)`
+                isHard ? `Papelão: ${actualCapW.toFixed(1).replace('.', ',')} mm` : `Largura: ${bw.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(actualCapW * calcResults.mmToPx)} px)`
             );
-            currentDrawX += bw;
+            currentDrawX += actualCapW + (isHard ? 5.0 : 0);
 
             // Lombada Text
             doc.saveGraphicsState();
@@ -1398,24 +1561,24 @@
                     `(${Math.round(sp * calcResults.mmToPx)} px)`
                 );
             }
-            currentDrawX += sp;
+            currentDrawX += sp + (isHard ? 5.0 : 0);
 
             // Capa
             doc.setTextColor(255, 255, 255);
             doc.setFont("Helvetica", "bold");
             doc.setFontSize(11); // Título Principal Padronizado
-            doc.text("CAPA PRINCIPAL", currentDrawX + bw / 2, labelY, { align: "center" });
+            doc.text("CAPA PRINCIPAL", currentDrawX + actualCapW / 2, labelY, { align: "center" });
             drawPdfBracket(
                 currentDrawX, 
-                currentDrawX + bw, 
+                currentDrawX + actualCapW, 
                 ccBracketY, 
-                `Largura: ${bw.toFixed(1).replace('.', ',')} mm`, 
-                `(${Math.round(bw * calcResults.mmToPx)} px)`
+                isHard ? `Papelão: ${actualCapW.toFixed(1).replace('.', ',')} mm` : `Largura: ${bw.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(actualCapW * calcResults.mmToPx)} px)`
             );
-            currentDrawX += bw;
+            currentDrawX += actualCapW;
 
             // Orelha Direita
-            if (fr > 0) {
+            if (fr > 0 && !isHard) {
                 doc.setTextColor(56, 189, 248);
                 doc.text("ORELHA", currentDrawX + fr / 2, labelY, { align: "center" });
                 drawPdfBracket(
@@ -1449,13 +1612,12 @@
             doc.line(globalX - 2, 0, globalX + 2, 0);
             doc.line(globalX - 2, totalH, globalX + 2, totalH);
 
-            const totalHText = `Altura Total: ${bh.toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)`;
+            const totalHText = `Altura Total: ${(bh + over * 2).toFixed(1).replace('.', ',')} mm + ${(b*2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)`;
             
             doc.saveGraphicsState();
             doc.setFont("Helvetica", "bold");
             doc.setFontSize(11); // Título Principal Padronizado
             doc.setTextColor(255, 255, 255);
-            // Desenha o texto rotacionado e recuado à esquerda da linha guia para não cortar na borda direita
             doc.text(totalHText, globalX - 4, totalH / 2, { angle: 270, align: "center" });
             doc.restoreGraphicsState();
 
@@ -1470,7 +1632,7 @@
             doc.setFont("Helvetica", "bold");
             doc.setFontSize(9); // Medida Padronizada
             doc.setTextColor(249, 115, 22);
-            doc.text(`Sangria: ${b.toFixed(1).replace('.', ',')} mm`, 40, totalH - 6, { align: "center" });
+            doc.text(`${isHard ? 'Vira' : 'Sangria'}: ${b.toFixed(1).replace('.', ',')} mm`, 40, totalH - 6, { align: "center" });
 
             const ptrSegX = b + s / 2;
             const ptrSegY = totalH - b - s / 2;
@@ -1499,19 +1661,33 @@
             // Fundo transparente
             ctx.clearRect(0, 0, w, h);
 
-            const b = calcResults.bleed * calcResults.mmToPx;
-            const s = calcResults.safety * calcResults.mmToPx;
-            const fl = calcResults.flapLeft * calcResults.mmToPx;
-            const fr = calcResults.flapRight * calcResults.mmToPx;
-            const sp = calcResults.spineWidth * calcResults.mmToPx;
-            const bw = calcResults.bookWidth * calcResults.mmToPx;
-            const bh = calcResults.bookHeight * calcResults.mmToPx;
+            const b_mm = calcResults.bleed;
+            const s_mm = calcResults.safety;
+            const fl_mm = calcResults.flapLeft;
+            const fr_mm = calcResults.flapRight;
+            const sp_mm = calcResults.spineWidth;
+            const bw_mm = calcResults.bookWidth;
+            const bh_mm = calcResults.bookHeight;
+            const mmToPx = calcResults.mmToPx;
+            const isHard = calcResults.isHardcover;
+            const over_mm = calcResults.overhang;
+            
+            const b = b_mm * mmToPx;
+            const s = s_mm * mmToPx;
+            const fl = fl_mm * mmToPx;
+            const fr = fr_mm * mmToPx;
+            const sp = sp_mm * mmToPx;
+            const bw = bw_mm * mmToPx;
+            const bh = bh_mm * mmToPx;
+            const over = over_mm * mmToPx;
+
+            const actualCapW = isHard ? (bw + over) : bw;
 
             // Helper to draw brackets on Canvas PNG
             function drawCanvasBracket(x1, x2, y, labelText, pixelWLabelText, strokeColor, fontColor) {
-                const bracketDepth = calcResults.mmToPx * 4; 
-                const stemLength = calcResults.mmToPx * 3;   
-                const lineWidth = Math.max(2, calcResults.mmToPx * 0.25);
+                const bracketDepth = mmToPx * 4; 
+                const stemLength = mmToPx * 3;   
+                const lineWidth = Math.max(2, mmToPx * 0.25);
                 const inset = Math.min(15, (x2 - x1) * 0.15); // Evita sobreposição em colunas finas
                 
                 ctx.strokeStyle = strokeColor;
@@ -1530,13 +1706,13 @@
                 ctx.stroke();
                 
                 ctx.fillStyle = fontColor;
-                ctx.font = `bold ${Math.round(calcResults.mmToPx * 3.5)}px Arial`; // Tamanho Padronizado
+                ctx.font = `bold ${Math.round(mmToPx * 3.5)}px Arial`; // Tamanho Padronizado
                 ctx.textBaseline = "top";
-                ctx.fillText(labelText, cx, y + bracketDepth + stemLength + calcResults.mmToPx * 2);
+                ctx.fillText(labelText, cx, y + bracketDepth + stemLength + mmToPx * 2);
                 
                 ctx.fillStyle = strokeColor;
-                ctx.font = `600 ${Math.round(calcResults.mmToPx * 3.0)}px Arial`; // Tamanho Padronizado
-                ctx.fillText(pixelWLabelText, cx, y + bracketDepth + stemLength + calcResults.mmToPx * 6);
+                ctx.font = `600 ${Math.round(mmToPx * 3.0)}px Arial`; // Tamanho Padronizado
+                ctx.fillText(pixelWLabelText, cx, y + bracketDepth + stemLength + mmToPx * 6);
             }
 
             // 1. ÁREA DE SANGRIA EXTERNA (Pêssego/Laranja)
@@ -1544,7 +1720,7 @@
             ctx.fillRect(0, 0, w, h);
 
             ctx.strokeStyle = "rgba(249, 115, 22, 0.9)";
-            ctx.lineWidth = Math.max(4, calcResults.mmToPx * 0.5);
+            ctx.lineWidth = Math.max(4, mmToPx * 0.5);
             ctx.strokeRect(0, 0, w, h);
 
             ctx.clearRect(b, b, w - b*2, h - b*2);
@@ -1557,60 +1733,61 @@
 
             // 3. LINHAS DE DOBRA VERTICAIS
             ctx.strokeStyle = "rgba(255, 255, 255, 0.35)";
-            ctx.lineWidth = Math.max(3, calcResults.mmToPx * 0.25);
+            ctx.lineWidth = Math.max(3, mmToPx * 0.25);
             ctx.setLineDash([15, 10]);
 
             let currX = b;
 
-            if (fl > 0) {
-                ctx.beginPath();
-                ctx.moveTo(currX + fl, b);
-                ctx.lineTo(currX + fl, h - b);
-                ctx.stroke();
+            if (fl > 0 && !isHard) {
+                ctx.beginPath(); ctx.moveTo(currX + fl, b); ctx.lineTo(currX + fl, h - b); ctx.stroke();
                 currX += fl;
             }
 
-            ctx.beginPath();
-            ctx.moveTo(currX + bw, b);
-            ctx.lineTo(currX + bw, h - b);
-            ctx.stroke();
-            currX += bw;
+            if (isHard) {
+                let channelW = 5.0 * mmToPx;
+                ctx.beginPath(); ctx.moveTo(currX + actualCapW, b); ctx.lineTo(currX + actualCapW, h - b); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(currX + actualCapW + channelW, b); ctx.lineTo(currX + actualCapW + channelW, h - b); ctx.stroke();
+                currX += actualCapW + channelW;
+            } else {
+                ctx.beginPath(); ctx.moveTo(currX + bw, b); ctx.lineTo(currX + bw, h - b); ctx.stroke();
+                currX += bw;
+            }
 
-            ctx.beginPath();
-            ctx.moveTo(currX + sp, b);
-            ctx.lineTo(currX + sp, h - b);
-            ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(currX + sp, b); ctx.lineTo(currX + sp, h - b); ctx.stroke();
             currX += sp;
 
-            if (fr > 0) {
-                ctx.beginPath();
-                ctx.moveTo(currX + bw, b);
-                ctx.lineTo(currX + bw, h - b);
-                ctx.stroke();
+            if (isHard) {
+                let channelW = 5.0 * mmToPx;
+                ctx.beginPath(); ctx.moveTo(currX + channelW, b); ctx.lineTo(currX + channelW, h - b); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(currX + channelW + actualCapW, b); ctx.lineTo(currX + channelW + actualCapW, h - b); ctx.stroke();
+            } else {
+                if (fr > 0) {
+                    ctx.beginPath(); ctx.moveTo(currX + bw, b); ctx.lineTo(currX + bw, h - b); ctx.stroke();
+                }
             }
 
             ctx.setLineDash([]); 
 
             // 4. TEXTOS DESCRITIVOS DOS BLOCOS & COTAS/MEDIDAS (Igual ao Preview!)
-            let labelY = b + Math.min(calcResults.mmToPx * 30, bh * 0.18);
+            let labelY = b + Math.min(mmToPx * 30, bh * 0.18);
             let ccBracketY = b + bh * 0.38;
 
             ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.font = `bold ${Math.round(mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
             let currentDrawX = b;
 
-            if (fl > 0) {
+            if (fl > 0 && !isHard) {
                 ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
                 ctx.fillText("ORELHA", currentDrawX + fl / 2, labelY);
                 drawCanvasBracket(
                     currentDrawX, 
                     currentDrawX + fl, 
                     ccBracketY, 
-                    `Largura: ${calcResults.flapLeft.toFixed(1).replace('.', ',')} mm + ${calcResults.bleed.toFixed(1).replace('.', ',')} mm`, 
-                    `(${Math.round((calcResults.flapLeft + calcResults.bleed) * calcResults.mmToPx)} px)`,
+                    `Largura: ${fl_mm.toFixed(1).replace('.', ',')} mm + ${b_mm.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round((fl_mm + b_mm) * mmToPx)} px)`,
                     "#475569", 
                     "#94a3b8"
                 );
@@ -1618,24 +1795,24 @@
             }
 
             ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-            ctx.fillText("CONTRACAPA", currentDrawX + bw / 2, labelY);
+            ctx.fillText("CONTRACAPA", currentDrawX + actualCapW / 2, labelY);
             drawCanvasBracket(
                 currentDrawX, 
-                currentDrawX + bw, 
+                currentDrawX + actualCapW, 
                 ccBracketY, 
-                `Largura: ${calcResults.bookWidth.toFixed(1).replace('.', ',')} mm`, 
-                `(${Math.round(calcResults.bookWidth * calcResults.mmToPx)} px)`,
+                isHard ? `Papelão: ${actualCapW.toFixed(1).replace('.', ',')} mm` : `Largura: ${bw_mm.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(actualCapW * mmToPx)} px)`,
                 "#475569", 
                 "#94a3b8"
             );
-            currentDrawX += bw;
+            currentDrawX += actualCapW + (isHard ? 5.0 * mmToPx : 0);
 
             // Lombada vertical
             ctx.save();
             ctx.translate(currentDrawX + sp / 2, b + bh / 2);
             ctx.rotate(-Math.PI / 2);
             ctx.fillStyle = "#818cf8";
-            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.font = `bold ${Math.round(mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
             ctx.textAlign = "center";
             ctx.fillText("LOMBADA", 0, 0);
             ctx.restore();
@@ -1643,10 +1820,10 @@
             // Lombada Bracket com indicador diagonal para lombadas finas
             let spX = currentDrawX + sp / 2;
             let spY = b + bh * 0.75;
-            if (sp < calcResults.mmToPx * 20) { 
-                const dOffset = calcResults.mmToPx * 6;
+            if (sp < mmToPx * 20) { 
+                const dOffset = mmToPx * 6;
                 ctx.strokeStyle = "#818cf8";
-                ctx.lineWidth = Math.max(2, calcResults.mmToPx * 0.25);
+                ctx.lineWidth = Math.max(2, mmToPx * 0.25);
                 ctx.beginPath();
                 ctx.moveTo(spX, spY);
                 ctx.lineTo(spX + dOffset, spY + dOffset);
@@ -1655,108 +1832,108 @@
                 
                 ctx.fillStyle = "#818cf8";
                 ctx.beginPath();
-                ctx.arc(spX, spY, Math.max(3, calcResults.mmToPx * 0.4), 0, Math.PI * 2);
+                ctx.arc(spX, spY, Math.max(3, mmToPx * 0.4), 0, Math.PI * 2);
                 ctx.fill();
                 
                 ctx.fillStyle = "#a5b4fc";
-                ctx.font = `bold ${Math.round(calcResults.mmToPx * 3.5)}px Arial`; // Tamanho Padronizado
+                ctx.font = `bold ${Math.round(mmToPx * 3.5)}px Arial`; // Tamanho Padronizado
                 ctx.textAlign = "left";
                 ctx.textBaseline = "middle";
-                ctx.fillText(`Largura: ${calcResults.spineWidth.toFixed(1).replace('.', ',')} mm`, spX + dOffset * 2.7, spY + dOffset - calcResults.mmToPx * 1.5);
+                ctx.fillText(`Largura: ${sp_mm.toFixed(1).replace('.', ',')} mm`, spX + dOffset * 2.7, spY + dOffset - mmToPx * 1.5);
                 ctx.fillStyle = "#818cf8";
-                ctx.font = `600 ${Math.round(calcResults.mmToPx * 3.0)}px Arial`; // Tamanho Padronizado
-                ctx.fillText(`(${Math.round(calcResults.spineWidth * calcResults.mmToPx)} px)`, spX + dOffset * 2.7, spY + dOffset + calcResults.mmToPx * 1.5);
+                ctx.font = `600 ${Math.round(mmToPx * 3.0)}px Arial`; // Tamanho Padronizado
+                ctx.fillText(`(${Math.round(sp_mm * mmToPx)} px)`, spX + dOffset * 2.7, spY + dOffset + mmToPx * 1.5);
             } else {
                 drawCanvasBracket(
                     currentDrawX, 
                     currentDrawX + sp, 
                     ccBracketY, 
-                    `Lombada: ${calcResults.spineWidth.toFixed(1).replace('.', ',')} mm`, 
-                    `(${Math.round(calcResults.spineWidth * calcResults.mmToPx)} px)`,
+                    `Lombada: ${sp_mm.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round(sp_mm * mmToPx)} px)`,
                     "#818cf8", 
                     "#a5b4fc"
                 );
             }
-            currentDrawX += sp;
+            currentDrawX += sp + (isHard ? 5.0 * mmToPx : 0);
 
             // Capa
             ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
-            ctx.fillText("CAPA PRINCIPAL", currentDrawX + bw / 2, labelY);
+            ctx.font = `bold ${Math.round(mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.fillText("CAPA PRINCIPAL", currentDrawX + actualCapW / 2, labelY);
             drawCanvasBracket(
                 currentDrawX, 
-                currentDrawX + bw, 
+                currentDrawX + actualCapW, 
                 ccBracketY, 
-                `Largura: ${calcResults.bookWidth.toFixed(1).replace('.', ',')} mm`, 
-                `(${Math.round(calcResults.bookWidth * calcResults.mmToPx)} px)`,
+                isHard ? `Papelão: ${actualCapW.toFixed(1).replace('.', ',')} mm` : `Largura: ${bw_mm.toFixed(1).replace('.', ',')} mm`, 
+                `(${Math.round(actualCapW * mmToPx)} px)`,
                 "#475569", 
                 "#94a3b8"
             );
-            currentDrawX += bw;
+            currentDrawX += actualCapW;
 
             // Orelha Direita
-            if (fr > 0) {
+            if (fr > 0 && !isHard) {
                 ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
                 ctx.fillText("ORELHA", currentDrawX + fr / 2, labelY);
                 drawCanvasBracket(
                     currentDrawX, 
                     currentDrawX + fr, 
                     ccBracketY, 
-                    `Largura: ${calcResults.flapRight.toFixed(1).replace('.', ',')} mm + ${calcResults.bleed.toFixed(1).replace('.', ',')} mm`, 
-                    `(${Math.round((calcResults.flapRight + calcResults.bleed) * calcResults.mmToPx)} px)`,
+                    `Largura: ${fr_mm.toFixed(1).replace('.', ',')} mm + ${b_mm.toFixed(1).replace('.', ',')} mm`, 
+                    `(${Math.round((fr_mm + b_mm) * mmToPx)} px)`,
                     "#475569", 
                     "#94a3b8"
                 );
             }
 
             // 5. COTA GLOBAL SUPERIOR (Largura Total - Ajuste anti-corte em PNG)
-            const globalY = Math.max(calcResults.mmToPx * 5, b * 0.4); // Deslocamento seguro
+            const globalY = Math.max(mmToPx * 5, b * 0.4); // Deslocamento seguro
             ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
-            ctx.lineWidth = Math.max(3, calcResults.mmToPx * 0.3);
+            ctx.lineWidth = Math.max(3, mmToPx * 0.3);
             ctx.beginPath();
             ctx.moveTo(0, globalY);
             ctx.lineTo(w, globalY);
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.moveTo(0, globalY - calcResults.mmToPx * 2);
-            ctx.lineTo(0, globalY + calcResults.mmToPx * 2);
-            ctx.moveTo(w, globalY - calcResults.mmToPx * 2);
-            ctx.lineTo(w, globalY + calcResults.mmToPx * 2);
+            ctx.moveTo(0, globalY - mmToPx * 2);
+            ctx.lineTo(0, globalY + mmToPx * 2);
+            ctx.moveTo(w, globalY - mmToPx * 2);
+            ctx.lineTo(w, globalY + mmToPx * 2);
             ctx.stroke();
 
             ctx.fillStyle = "#ffffff";
-            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.font = `bold ${Math.round(mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
             ctx.textAlign = "center";
             ctx.textBaseline = "top"; // Renderiza abaixo da linha para não cortar
-            const totalWText = `Largura Total: ${calcResults.totalWidthNoBleed.toFixed(1).replace('.', ',')} mm + ${(calcResults.bleed * 2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaWidth} px)`;
-            ctx.fillText(totalWText, w / 2, globalY + calcResults.mmToPx * 2);
+            const totalWText = `Largura Total: ${calcResults.totalWidthNoBleed.toFixed(1).replace('.', ',')} mm + ${(b_mm * 2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaWidth} px)`;
+            ctx.fillText(totalWText, w / 2, globalY + mmToPx * 2);
 
             // 6. COTA GLOBAL LATERAL DIREITA (Altura Total - Ajuste anti-corte lateral em PNG)
-            const globalX = w - Math.max(calcResults.mmToPx * 5, b * 0.4);
+            const globalX = w - Math.max(mmToPx * 5, b * 0.4);
             ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
-            ctx.lineWidth = Math.max(3, calcResults.mmToPx * 0.3);
+            ctx.lineWidth = Math.max(3, mmToPx * 0.3);
             ctx.beginPath();
             ctx.moveTo(globalX, 0);
             ctx.lineTo(globalX, h);
             ctx.stroke();
 
             ctx.beginPath();
-            ctx.moveTo(globalX - calcResults.mmToPx * 2, 0);
-            ctx.lineTo(globalX + calcResults.mmToPx * 2, 0);
-            ctx.moveTo(globalX - calcResults.mmToPx * 2, h);
-            ctx.lineTo(globalX + calcResults.mmToPx * 2, h);
+            ctx.moveTo(globalX - mmToPx * 2, 0);
+            ctx.lineTo(globalX + mmToPx * 2, 0);
+            ctx.moveTo(globalX - mmToPx * 2, h);
+            ctx.lineTo(globalX + mmToPx * 2, h);
             ctx.stroke();
 
             // Texto vertical da Altura Total recuado à esquerda
             ctx.save();
-            ctx.translate(globalX - calcResults.mmToPx * 4, h / 2); // Recuo seguro
+            ctx.translate(globalX - mmToPx * 4, h / 2); // Recuo seguro
             ctx.rotate(-Math.PI / 2);
             ctx.fillStyle = "#ffffff";
-            ctx.font = `bold ${Math.round(calcResults.mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
+            ctx.font = `bold ${Math.round(mmToPx * 4.5)}px Arial`; // Tamanho Padronizado
             ctx.textAlign = "center";
             ctx.textBaseline = "bottom";
-            const totalHText = `Altura Total: ${calcResults.bookHeight.toFixed(1).replace('.', ',')} mm + ${(calcResults.bleed * 2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)`;
+            const totalHText = `Altura Total: ${(bh_mm + over_mm * 2).toFixed(1).replace('.', ',')} mm + ${(b_mm * 2).toFixed(1).replace('.', ',')} mm (${calcResults.canvaHeight} px)`;
             ctx.fillText(totalHText, 0, 0);
             ctx.restore();
 
@@ -1764,38 +1941,38 @@
             const ptrSangriaX = b / 2;
             const ptrSangriaY = h - b * 0.5;
             ctx.strokeStyle = "#ef4444";
-            ctx.lineWidth = Math.max(2, calcResults.mmToPx * 0.25);
+            ctx.lineWidth = Math.max(2, mmToPx * 0.25);
             ctx.beginPath();
-            ctx.moveTo(calcResults.mmToPx * 150, h - calcResults.mmToPx * 10);
-            ctx.lineTo(calcResults.mmToPx * 150, h - calcResults.mmToPx * 20);
+            ctx.moveTo(mmToPx * 150, h - mmToPx * 10);
+            ctx.lineTo(mmToPx * 150, h - mmToPx * 20);
             ctx.lineTo(ptrSangriaX, ptrSangriaY);
             ctx.stroke();
 
-            drawArrowhead(ctx, calcResults.mmToPx * 150, h - calcResults.mmToPx * 20, ptrSangriaX, ptrSangriaY, Math.max(12, calcResults.mmToPx * 2));
+            drawArrowhead(ctx, mmToPx * 150, h - mmToPx * 20, ptrSangriaX, ptrSangriaY, Math.max(12, mmToPx * 2));
 
             ctx.fillStyle = "#f97316";
-            ctx.font = `bold ${Math.round(calcResults.mmToPx * 3.6)}px Arial`; // Tamanho Padronizado
+            ctx.font = `bold ${Math.round(mmToPx * 3.6)}px Arial`; // Tamanho Padronizado
             ctx.textBaseline = "top";
-            ctx.fillText(`Sangria: ${calcResults.bleed.toFixed(1).replace('.', ',')}mm`, calcResults.mmToPx * 150, h - calcResults.mmToPx * 8);
+            ctx.fillText(`${isHard ? 'Vira' : 'Sangria'}: ${b_mm.toFixed(1).replace('.', ',')}mm`, mmToPx * 150, h - mmToPx * 8);
 
             const ptrSegX = b + s / 2;
             const ptrSegY = h - b - s / 2;
             ctx.strokeStyle = "#38bdf8";
             ctx.beginPath();
-            ctx.moveTo(w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 10);
-            ctx.lineTo(w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 20);
+            ctx.moveTo(w - mmToPx * 150, h - mmToPx * 10);
+            ctx.lineTo(w - mmToPx * 150, h - mmToPx * 20);
             ctx.lineTo(ptrSegX, ptrSegY);
             ctx.stroke();
 
-            drawArrowhead(ctx, w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 20, ptrSegX, ptrSegY, Math.max(12, calcResults.mmToPx * 2));
+            drawArrowhead(ctx, w - mmToPx * 150, h - mmToPx * 20, ptrSegX, ptrSegY, Math.max(12, mmToPx * 2));
 
             ctx.fillStyle = "#38bdf8";
-            ctx.fillText(`Margem de segurança: ${calcResults.safety.toFixed(1).replace('.', ',')}mm`, w - calcResults.mmToPx * 150, h - calcResults.mmToPx * 8);
+            ctx.fillText(`Margem de segurança: ${s_mm.toFixed(1).replace('.', ',')}mm`, w - mmToPx * 150, h - mmToPx * 8);
 
             // Salvar e Baixar imagem automaticamente
             const image = canvas.toDataURL("image/png");
             const link = document.createElement("a");
-            link.download = `gabarito-uiclap-guia-${activeProject.name.toLowerCase().replace(/\s+/g, '-')}.png`;
+            link.download = `gabarito-guia-${activeProject.name.toLowerCase().replace(/\s+/g, '-')}.png`;
             link.href = image;
             link.click();
 
